@@ -1,0 +1,326 @@
+<title>Hadees Library</title>
+
+<style>
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        background: #f1f7f4;
+        color: #26352d;
+    }
+
+    header {
+        background: linear-gradient(135deg, #075e45, #0b8060);
+        color: white;
+        text-align: center;
+        padding: 50px 20px;
+    }
+
+    header h1 {
+        font-size: 42px;
+        margin-bottom: 10px;
+    }
+
+    header p {
+        font-size: 18px;
+    }
+
+    nav {
+        background: #064936;
+        text-align: center;
+        padding: 16px;
+    }
+
+    nav a {
+        color: white;
+        text-decoration: none;
+        margin: 0 18px;
+        font-weight: bold;
+    }
+
+    nav a:hover {
+        color: #b7e4d1;
+    }
+
+    .container {
+        width: 90%;
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    .search {
+        background: white;
+        padding: 25px;
+        margin: 35px 0;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .search h2 {
+        margin-bottom: 15px;
+        color: #075e45;
+    }
+
+    .search input {
+        width: 75%;
+        padding: 14px;
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        font-size: 16px;
+    }
+
+    .search button {
+        padding: 14px 22px;
+        background: #087653;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+    }
+
+    .search button:hover {
+        background: #064936;
+    }
+
+    .section-title {
+        text-align: center;
+        color: #075e45;
+        margin-bottom: 25px;
+        font-size: 30px;
+    }
+
+    .hadith-card {
+        background: white;
+        padding: 30px;
+        margin-bottom: 25px;
+        border-radius: 12px;
+        border-left: 5px solid #087653;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    }
+
+    .hadith-number {
+        color: #087653;
+        font-weight: bold;
+        margin-bottom: 15px;
+    }
+
+    .arabic {
+        direction: rtl;
+        text-align: right;
+        font-size: 28px;
+        line-height: 2;
+        color: #075e45;
+        margin-bottom: 20px;
+    }
+
+    .translation {
+        font-size: 17px;
+        line-height: 1.8;
+        margin-bottom: 20px;
+    }
+
+    .reference {
+        border-top: 1px solid #ddd;
+        padding-top: 15px;
+        color: #666;
+    }
+
+    .about {
+        background: #e1efe9;
+        padding: 35px;
+        margin: 40px 0;
+        border-radius: 12px;
+        text-align: center;
+    }
+
+    .about h2 {
+        color: #075e45;
+        margin-bottom: 15px;
+    }
+
+    footer {
+        background: #064936;
+        color: white;
+        text-align: center;
+        padding: 25px;
+        margin-top: 40px;
+    }
+
+    @media (max-width: 600px) {
+        header h1 {
+            font-size: 32px;
+        }
+
+        nav a {
+            margin: 0 7px;
+            font-size: 14px;
+        }
+
+        .search input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .search button {
+            width: 100%;
+        }
+
+        .arabic {
+            font-size: 22px;
+        }
+    }
+</style>
+<header>
+    <h1>☪ Hadees Library</h1>
+    <p>Read, Learn & Share Authentic Hadith</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#hadith">Hadith</a>
+    <a href="#about">About</a>
+</nav>
+
+<main class="container" id="home">
+
+    <!-- Search -->
+    <section class="search">
+        <h2>🔎 Search Hadees</h2>
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by keyword..."
+        >
+
+        <button onclick="searchHadith()">Search</button>
+    </section>
+
+    <!-- Hadith -->
+    <section id="hadith">
+
+        <h2 class="section-title">📖 Hadith Collection</h2>
+
+        <div class="hadith-card">
+            <div class="hadith-number">
+                Hadith #1
+            </div>
+
+            <div class="arabic">
+                إِنَّمَا الأَعْمَالُ بِالنِّيَّاتِ
+            </div>
+
+            <div class="translation">
+                Actions are judged by intentions. Every person will
+                have what they intended.
+            </div>
+
+            <div class="reference">
+                <strong>Book:</strong> Sahih al-Bukhari
+                <br>
+                <strong>Reference:</strong> Hadith 1
+            </div>
+        </div>
+
+
+        <div class="hadith-card">
+            <div class="hadith-number">
+                Hadith #2
+            </div>
+
+            <div class="arabic">
+                خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ
+            </div>
+
+            <div class="translation">
+                The best among you are those who learn the Quran
+                and teach it.
+            </div>
+
+            <div class="reference">
+                <strong>Book:</strong> Sahih al-Bukhari
+                <br>
+                <strong>Reference:</strong> Hadith 5027
+            </div>
+        </div>
+
+
+        <div class="hadith-card">
+            <div class="hadith-number">
+                Hadith #3
+            </div>
+
+            <div class="arabic">
+                مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الآخِرِ
+                فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ
+            </div>
+
+            <div class="translation">
+                Whoever believes in Allah and the Last Day should
+                speak good or remain silent.
+            </div>
+
+            <div class="reference">
+                <strong>Book:</strong> Sahih al-Bukhari
+                <br>
+                <strong>Reference:</strong> Hadith 6018
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- About -->
+    <section class="about" id="about">
+
+        <h2>About Hadees Library</h2>
+
+        <p>
+            Welcome to Hadees Library. This website is designed
+            to make it easy to read and search Hadith.
+        </p>
+
+        <br>
+
+        <p>
+            Please verify Hadith text and references with
+            reliable scholarly sources before publishing them.
+        </p>
+
+    </section>
+
+</main>
+
+
+<footer>
+    <p>© 2026 Hadees Library | Islamic Knowledge</p>
+</footer>
+
+
+<script>
+    function searchHadith() {
+
+        let input = document
+            .getElementById("searchInput")
+            .value
+            .toLowerCase();
+
+        let cards = document.querySelectorAll(".hadith-card");
+
+        cards.forEach(function(card) {
+
+            let text = card.innerText.toLowerCase();
+
+            if (text.includes(input)) {
+                card.style.display = "block";
+            } else {
+                card.style.display = "none";
+            }
+
+        });
+    }
+</script>
