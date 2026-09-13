@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBooks Library</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: #222;
+        }
+
+        /* NAVBAR */
+        header {
+            background: #172554;
+            color: white;
+            padding: 15px 6%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav button {
+            background: transparent;
+            border: none;
+            color: white;
+            margin-left: 15px;
+            cursor: pointer;
+            font-size: 15px;
+        }
+
+        nav button:hover {
+            color: #93c5fd;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            text-align: center;
+            padding: 70px 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            margin-bottom: 15px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            margin-bottom: 25px;
+        }
+
+        .search-box {
+            max-width: 650px;
+            margin: auto;
+            display: flex;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .search-box input {
+            flex: 1;
+            border: none;
+            padding: 16px;
+            font-size: 16px;
+            outline: none;
+        }
+
+        .search-box button {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            cursor: pointer;
+        }
+
+        /* BOOKS */
+        .container {
+            width: 88%;
+            max-width: 1200px;
+            margin: 40px auto;
+        }
+
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .section-title h2 {
+            color: #172554;
+        }
+
+        .books-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+
+        .book-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: 0.3s;
+        }
+
+        .book-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .book-cover {
+            height: 230px;
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1e3a8a;
+            font-size: 55px;
+        }
+
+        .book-info {
+            padding: 18px;
+        }
+
+        .book-info h3 {
+            margin-bottom: 8px;
+            color: #172554;
+        }
+
+        .book-info p {
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .book-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            border: none;
+            padding: 10px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+        .btn-success {
+            background: #16a34a;
+            color: white;
+        }
+
+        /* MODALS */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            width: 100%;
+            max-width: 450px;
+            padding: 30px;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            color: #172554;
+        }
+
+        .close {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 13px;
+            background: #2563eb;
+            border: none;
+            color: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* ADMIN */
+        #adminSection {
+            display: none;
+        }
+
+        .admin-panel {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .admin-panel h2 {
+            margin-bottom: 20px;
+            color: #172554;
+        }
+
+        .empty {
+            text-align: center;
+            padding: 50px;
+            color: #777;
+            grid-column: 1 / -1;
+        }
+
+        footer {
+            margin-top: 60px;
+            background: #172554;
+            color: white;
+            text-align: center;
+            padding: 25px;
+        }
+
+        @media(max-width: 600px) {
+            .hero h1 {
+                font-size: 30px;
+            }
+
+            header {
+                padding: 15px 4%;
+            }
+
+            nav button {
+                margin-left: 5px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<header>
+    <div class="logo">📚 MyBooks</div>
+
+    <nav>
+        <button onclick="showHome()">Home</button>
+        <button onclick="showLogin()" id="loginBtn">Login</button>
+        <button onclick="showAdmin()" id="adminBtn" style="display:none;">
+            Admin Panel
+        </button>
+        <button onclick="logout()" id="logoutBtn" style="display:none;">
+            Logout
+        </button>
+    </nav>
+</header>
+
+<!-- HERO -->
+<section class="hero">
+    <h1>Welcome to MyBooks Library</h1>
+    <p>Search and explore your digital book collection</p>
+
+    <div class="search-box">
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="Search by book title or author..."
+            onkeyup="searchBooks()"
+        >
+        <button onclick="searchBooks()">🔎 Search</button>
+    </div>
+</section>
+
+<!-- BOOK LIBRARY -->
+<section class="container" id="librarySection">
+
+    <div class="section-title">
+        <h2>📚 Our Books</h2>
+        <span id="bookCount"></span>
+    </div>
+
+    <div class="books-grid" id="booksGrid"></div>
+
+</section>
+
+<!-- ADMIN SECTION -->
+<section class="container" id="adminSection">
+
+    <div class="admin-panel">
+
+        <h2>👨‍💼 Admin Dashboard</h2>
+
+        <form id="bookForm">
+
+            <div class="form-group">
+                <label>Book Title</label>
+                <input
+                    type="text"
+                    id="bookTitle"
+                    placeholder="Enter book title"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Author</label>
+                <input
+                    type="text"
+                    id="bookAuthor"
+                    placeholder="Enter author name"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Description</label>
+                <textarea
+                    id="bookDescription"
+                    rows="4"
+                    placeholder="Enter book description"
+                    required
+                ></textarea>
+            </div>
+
+            <div class="form-group">
+                <label>PDF File</label>
+                <input
+                    type="file"
+                    id="bookPDF"
+                    accept="application/pdf"
+                    required
+                >
+            </div>
+
+            <button class="form-submit" type="submit">
+                ➕ Add Book
+            </button>
+
+        </form>
+
+    </div>
+
+</section>
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+
+    <div class="modal-content">
+
+        <span class="close" onclick="closeModal('loginModal')">
+            &times;
+        </span>
+
+        <h2>🔐 Login</h2>
+
+        <form id="loginForm">
+
+            <div class="form-group">
+                <label>Email</label>
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="admin@example.com"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Enter password"
+                    required
+                >
+            </div>
+
+            <button class="form-submit">
+                Login
+            </button>
+
+        </form>
+
+        <p style="margin-top:15px;color:#777;font-size:13px;">
+            Demo admin: admin@example.com<br>
+            Password: admin123
+        </p>
+
+    </div>
+
+</div>
+
+<footer>
+    <p>© 2026 MyBooks Library. All rights reserved.</p>
+</footer>
+
+<script>
+
+    // ------------------------------------------------
+    // DEFAULT BOOKS
+    // ------------------------------------------------
+
+    let books = JSON.parse(localStorage.getItem("books")) || [
+        {
+            id: 1,
+            title: "The Great Adventure",
+            author: "John Smith",
+            description: "An exciting adventure story.",
+            pdf: ""
+        },
+        {
+            id: 2,
+            title: "Learning JavaScript",
+            author: "David Brown",
+            description: "A beginner friendly JavaScript book.",
+            pdf: ""
+        },
+        {
+            id: 3,
+            title: "Modern Web Design",
+            author: "Sarah Wilson",
+            description: "Learn modern HTML and CSS techniques.",
+            pdf: ""
+        }
+    ];
+
+    let loggedIn = false;
+
+    // ------------------------------------------------
+    // DISPLAY BOOKS
+    // ------------------------------------------------
+
+    function displayBooks(bookList = books) {
+
+        const grid = document.getElementById("booksGrid");
+
+        document.getElementById("bookCount").innerText =
+            `${bookList.length} book(s)`;
+
+        grid.innerHTML = "";
+
+        if (bookList.length === 0) {
+            grid.innerHTML = `
+                <div class="empty">
+                    <h3>📚 No books found</h3>
+                    <p>Try another search.</p>
+                </div>
+            `;
+            return;
+        }
+
+        bookList.forEach(book => {
+
+            let pdfButton = "";
+
+            if (book.pdf) {
+                pdfButton = `
+                    <button
+                        class="btn btn-success"
+                        onclick="openPDF(${book.id})">
+                        📄 Read PDF
+                    </button>
+                `;
+            }
+
+            let deleteButton = "";
+
+            if (loggedIn) {
+                deleteButton = `
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteBook(${book.id})">
+                        🗑️ Delete
+                    </button>
+                `;
+            }
+
+            grid.innerHTML += `
+                <div class="book-card">
+
+                    <div class="book-cover">
+                        📖
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>${escapeHTML(book.title)}</h3>
+
+                        <p>
+                            <strong>Author:</strong>
+                            ${escapeHTML(book.author)}
+                        </p>
+
+                        <p>
+                            ${escapeHTML(book.description)}
+                        </p>
+
+                        <div class="book-actions">
+                            ${pdfButton}
+                            ${deleteButton}
+                        </div>
+
+                    </div>
+
+                </div>
+            `;
+        });
+    }
+
+    // ------------------------------------------------
+    // SEARCH
+    // ------------------------------------------------
+
+    function searchBooks() {
+
+        const query =
+            document.getElementById("searchInput")
+            .value
+            .toLowerCase()
+            .trim();
+
+        const filtered = books.filter(book =>
+            book.title.toLowerCase().includes(query) ||
+            book.author.toLowerCase().includes(query)
+        );
+
+        displayBooks(filtered);
+    }
+
+    // ------------------------------------------------
+    // LOGIN
+    // ------------------------------------------------
+
+    function showLogin() {
+        document.getElementById("loginModal").style.display = "flex";
+    }
+
+    document.getElementById("loginForm")
+        .addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        const email =
+            document.getElementById("email").value;
+
+        const password =
+            document.getElementById("password").value;
+
+        // DEMO LOGIN ONLY
+        if (
+            email === "admin@example.com" &&
+            password === "admin123"
+        ) {
+
+            loggedIn = true;
+
+            document.getElementById("loginBtn")
+                .style.display = "none";
+
+            document.getElementById("logoutBtn")
+                .style.display = "inline-block";
+
+            document.getElementById("adminBtn")
+                .style.display = "inline-block";
+
+            closeModal("loginModal");
+
+            alert("Login successful!");
+
+            displayBooks();
+
+        } else {
+
+            alert("Invalid email or password.");
+
+        }
+
+    });
+
+    // ------------------------------------------------
+    // LOGOUT
+    // ------------------------------------------------
+
+    function logout() {
+
+        loggedIn = false;
+
+        document.getElementById("loginBtn")
+            .style.display = "inline-block";
+
+        document.getElementById("logoutBtn")
+            .style.display = "none";
+
+        document.getElementById("adminBtn")
+            .style.display = "none";
+
+        document.getElementById("adminSection")
+            .style.display = "none";
+
+        document.getElementById("librarySection")
+            .style.display = "block";
+
+        displayBooks();
+
+    }
+
+    // ------------------------------------------------
+    // ADMIN PANEL
+    // ------------------------------------------------
+
+    function showAdmin() {
+
+        if (!loggedIn) {
+            showLogin();
+            return;
+        }
+
+        document.getElementById("librarySection")
+            .style.display = "none";
+
+        document.getElementById("adminSection")
+            .style.display = "block";
+
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+    }
+
+    function showHome() {
+
+        document.getElementById("librarySection")
+            .style.display = "block";
+
+        document.getElementById("adminSection")
+            .style.display = "none";
+
+        displayBooks();
+
+    }
+
+    // ------------------------------------------------
+    // ADD BOOK
+    // ------------------------------------------------
+
+    document.getElementById("bookForm")
+        .addEventListener("submit", function(e) {
+
+        e.preventDefault();
+
+        if (!loggedIn) {
+            alert("Please login as admin.");
+            return;
+        }
+
+        const title =
+            document.getElementById("bookTitle").value;
+
+        const author =
+            document.getElementById("bookAuthor").value;
+
+        const description =
+            document.getElementById("bookDescription").value;
+
+        const pdfFile =
+            document.getElementById("bookPDF").files[0];
+
+        if (!pdfFile) {
+            alert("Please select a PDF file.");
+            return;
+        }
+
+        if (pdfFile.type !== "application/pdf") {
+            alert("Only PDF files are allowed.");
+            return;
+        }
+
+        // WARNING:
+        // Base64/localStorage is suitable only for small demos.
+        // Real websites should upload PDFs to a server/storage service.
+
+        const reader = new FileReader();
+
+        reader.onload = function(event) {
+
+            const newBook = {
+
+                id: Date.now(),
+
+                title: title,
+
+                author: author,
+
+                description: description,
+
+                pdf: event.target.result
+
+            };
+
+            books.push(newBook);
+
+            localStorage.setItem(
+                "books",
+                JSON.stringify(books)
+            );
+
+            alert("Book added successfully!");
+
+            document.getElementById("bookForm").reset();
+
+            showHome();
+
+        };
+
+        reader.readAsDataURL(pdfFile);
+
+    });
+
+    // ------------------------------------------------
+    // OPEN PDF
+    // ------------------------------------------------
+
+    function openPDF(id) {
+
+        const book = books.find(book => book.id === id);
+
+        if (!book || !book.pdf) {
+            alert("PDF is not available.");
+            return;
+        }
+
+        const newWindow = window.open();
+
+        if (newWindow) {
+            newWindow.document.write(`
+                <html>
+                <head>
+                    <title>${escapeHTML(book.title)}</title>
+                    <style>
+                        body {
+                            margin:0;
+                            background:#222;
+                        }
+                        iframe {
+                            width:100%;
+                            height:100vh;
+                            border:none;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <iframe src="${book.pdf}"></iframe>
+                </body>
+                </html>
+            `);
+        }
+
+    }
+
+    // ------------------------------------------------
+    // DELETE BOOK
+    // ------------------------------------------------
+
+    function deleteBook(id) {
+
+        if (!loggedIn) {
+            alert("Admin login required.");
+            return;
+        }
+
+        if (!confirm("Delete this book?")) {
+            return;
+        }
+
+        books = books.filter(book => book.id !== id);
+
+        localStorage.setItem(
+            "books",
+            JSON.stringify(books)
+        );
+
+        displayBooks();
+
+    }
+
+    // ------------------------------------------------
+    // CLOSE MODAL
+    // ------------------------------------------------
+
+    function closeModal(id) {
+        document.getElementById(id).style.display = "none";
+    }
+
+    window.onclick = function(event) {
+
+        const modal =
+            document.getElementById("loginModal");
+
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+
+    };
+
+    // ------------------------------------------------
+    // SECURITY HELPER
+    // ------------------------------------------------
+
+    function escapeHTML(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+
+    }
+
+    // ------------------------------------------------
+    // INITIAL LOAD
+    // ------------------------------------------------
+
+    displayBooks();
+
+</script>
+
+</body>
+</html>
