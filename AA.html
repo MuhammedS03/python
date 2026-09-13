@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>الكتب | المكتبة العربية</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background: #f5f1e7;
+            color: #332b20;
+        }
+
+        /* ================= HEADER ================= */
+
+        header {
+            background: #263d2b;
+            color: white;
+            padding: 18px 6%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: bold;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 0 10px;
+            cursor: pointer;
+        }
+
+        nav a:hover {
+            color: #d7b457;
+        }
+
+
+        /* ================= PAGE TITLE ================= */
+
+        .page-header {
+            background: linear-gradient(
+                135deg,
+                #263d2b,
+                #38583f
+            );
+
+            color: white;
+            text-align: center;
+
+            padding: 50px 20px;
+        }
+
+        .page-header h1 {
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .page-header p {
+            color: #e8dfc7;
+            font-size: 17px;
+        }
+
+
+        /* ================= MAIN ================= */
+
+        .container {
+            width: 90%;
+            max-width: 1250px;
+            margin: 40px auto;
+        }
+
+
+        /* ================= SEARCH ================= */
+
+        .search-box {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,.08);
+
+            margin-bottom: 35px;
+        }
+
+        .search-box input {
+            width: 100%;
+
+            padding: 15px;
+
+            border: 1px solid #ddd;
+            border-radius: 7px;
+
+            font-size: 17px;
+
+            outline: none;
+            text-align: right;
+        }
+
+        .search-box input:focus {
+            border-color: #c59b3b;
+        }
+
+
+        /* ================= CONTENT ================= */
+
+        .content {
+            display: grid;
+
+            grid-template-columns: 230px 1fr;
+
+            gap: 30px;
+        }
+
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            background: white;
+
+            padding: 20px;
+
+            border-radius: 10px;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,.08);
+
+            height: fit-content;
+        }
+
+        .sidebar h3 {
+            color: #263d2b;
+
+            border-right: 4px solid #c59b3b;
+
+            padding-right: 10px;
+
+            margin-bottom: 18px;
+        }
+
+        .category {
+            display: block;
+
+            width: 100%;
+
+            background: transparent;
+
+            border: none;
+
+            text-align: right;
+
+            padding: 12px;
+
+            border-radius: 6px;
+
+            cursor: pointer;
+
+            color: #554a3c;
+
+            font-size: 15px;
+
+            margin-bottom: 5px;
+        }
+
+        .category:hover,
+        .category.active {
+            background: #263d2b;
+            color: white;
+        }
+
+
+        /* ================= BOOK AREA ================= */
+
+        .books-header {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            margin-bottom: 20px;
+        }
+
+        .books-header h2 {
+            color: #263d2b;
+        }
+
+        #bookCount {
+            color: #8b6a29;
+        }
+
+
+        /* ================= BOOK GRID ================= */
+
+        .books {
+            display: grid;
+
+            grid-template-columns:
+                repeat(auto-fill, minmax(220px, 1fr));
+
+            gap: 25px;
+        }
+
+
+        /* ================= BOOK CARD ================= */
+
+        .book {
+            background: white;
+
+            border-radius: 10px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 4px 15px rgba(0,0,0,.08);
+
+            transition: .3s;
+        }
+
+        .book:hover {
+            transform: translateY(-6px);
+
+            box-shadow:
+                0 8px 22px rgba(0,0,0,.12);
+        }
+
+
+        /* ================= COVER ================= */
+
+        .cover {
+            height: 250px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #263d2b,
+                    #17251b
+                );
+
+            color: #dfc36c;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+
+            align-items: center;
+
+            text-align: center;
+
+            padding: 20px;
+        }
+
+        .cover .book-icon {
+            font-size: 55px;
+
+            margin-bottom: 15px;
+        }
+
+        .cover h3 {
+            font-size: 21px;
+        }
+
+
+        /* ================= BOOK INFO ================= */
+
+        .book-info {
+            padding: 18px;
+        }
+
+        .book-info h3 {
+            color: #263d2b;
+
+            font-size: 18px;
+
+            margin-bottom: 8px;
+        }
+
+        .author {
+            color: #a07826;
+
+            font-size: 14px;
+
+            margin-bottom: 10px;
+        }
+
+        .book-info p {
+            color: #666;
+
+            line-height: 1.7;
+
+            font-size: 14px;
+
+            min-height: 48px;
+        }
+
+
+        /* ================= BUTTONS ================= */
+
+        .buttons {
+            display: flex;
+
+            gap: 7px;
+
+            margin-top: 15px;
+        }
+
+        .read {
+            flex: 1;
+
+            background: #263d2b;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+        .read:hover {
+            background: #38583f;
+        }
+
+        .download {
+            background: #c59b3b;
+
+            color: white;
+
+            border: none;
+
+            padding: 11px 13px;
+
+            border-radius: 5px;
+
+            cursor: pointer;
+        }
+
+
+        /* ================= NO RESULTS ================= */
+
+        .no-results {
+            display: none;
+
+            background: white;
+
+            padding: 50px;
+
+            text-align: center;
+
+            border-radius: 10px;
+
+            color: #777;
+        }
+
+
+        /* ================= FOOTER ================= */
+
+        footer {
+            background: #263d2b;
+
+            color: white;
+
+            text-align: center;
+
+            padding: 30px;
+
+            margin-top: 60px;
+        }
+
+
+        /* ================= MOBILE ================= */
+
+        @media(max-width: 800px) {
+
+            .content {
+                grid-template-columns: 1fr;
+            }
+
+            .sidebar {
+                display: flex;
+
+                overflow-x: auto;
+
+                gap: 5px;
+            }
+
+            .sidebar h3 {
+                display: none;
+            }
+
+            .category {
+                min-width: 130px;
+
+                text-align: center;
+            }
+
+            header {
+                flex-direction: column;
+
+                gap: 15px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+
+<!-- ================= HEADER ================= -->
+
+<header>
+
+    <div class="logo">
+        📚 المكتبة العربية
+    </div>
+
+    <nav>
+
+        <a href="index.html">
+            الرئيسية
+        </a>
+
+        <a href="books.html">
+            الكتب
+        </a>
+
+        <a href="#">
+            المؤلفون
+        </a>
+
+        <a href="#">
+            تسجيل الدخول
+        </a>
+
+    </nav>
+
+</header>
+
+
+
+<!-- ================= PAGE HEADER ================= -->
+
+<section class="page-header">
+
+    <h1>
+        📚 الكتب
+    </h1>
+
+    <p>
+        تصفح مجموعة الكتب والمراجع العربية
+    </p>
+
+</section>
+
+
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+
+    <!-- SEARCH -->
+
+    <div class="search-box">
+
+        <input
+            type="text"
+            id="search"
+            placeholder="🔍 ابحث عن اسم الكتاب أو المؤلف..."
+            onkeyup="searchBooks()"
+        >
+
+    </div>
+
+
+
+    <!-- CONTENT -->
+
+    <div class="content">
+
+
+        <!-- SIDEBAR -->
+
+        <aside class="sidebar">
+
+            <h3>
+                أقسام الكتب
+            </h3>
+
+            <button
+                class="category active"
+                onclick="filterBooks('all', this)"
+            >
+                📚 جميع الكتب
+            </button>
+
+            <button
+                class="category"
+                onclick="filterBooks('quran', this)"
+            >
+                📖 القرآن وعلومه
+            </button>
+
+            <button
+                class="category"
+                onclick="filterBooks('hadith', this)"
+            >
+                ☪️ الحديث
+            </button>
+
+            <button
+                class="category"
+                onclick="filterBooks('fiqh', this)"
+            >
+                ⚖️ الفقه
+            </button>
+
+            <button
+                class="category"
+                onclick="filterBooks('aqeedah', this)"
+            >
+                📜 العقيدة
+            </button>
+
+            <button
+                class="category"
+                onclick="filterBooks('language', this)"
+            >
+                ✍️ اللغة العربية
+            </button>
+
+            <button
+                class="category"
+                onclick="filterBooks('history', this)"
+            >
+                🏛️ التاريخ
+            </button>
+
+            <button
+                class="category"
+                onclick="filterBooks('literature', this)"
+            >
+                🖋️ الأدب
+            </button>
+
+        </aside>
+
+
+
+        <!-- BOOKS -->
+
+        <main>
+
+            <div class="books-header">
+
+                <h2>
+                    قائمة الكتب
+                </h2>
+
+                <span id="bookCount">
+                    8 كتب
+                </span>
+
+            </div>
+
+
+            <div class="books" id="books">
+
+
+                <!-- BOOK 1 -->
+
+                <div
+                    class="book"
+                    data-category="quran"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📕
+                        </div>
+
+                        <h3>
+                            علوم القرآن
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            علوم القرآن
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: محمد عبد الله
+                        </div>
+
+                        <p>
+                            كتاب في مباحث علوم القرآن الكريم.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('علوم القرآن')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BOOK 2 -->
+
+                <div
+                    class="book"
+                    data-category="hadith"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📗
+                        </div>
+
+                        <h3>
+                            كتب الحديث
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            مختصر الحديث
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: أحمد حسن
+                        </div>
+
+                        <p>
+                            مجموعة مختارة من الأحاديث.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('مختصر الحديث')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BOOK 3 -->
+
+                <div
+                    class="book"
+                    data-category="fiqh"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📘
+                        </div>
+
+                        <h3>
+                            الفقه
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            مبادئ الفقه
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: عبد الرحمن علي
+                        </div>
+
+                        <p>
+                            مقدمة مبسطة في علم الفقه.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('مبادئ الفقه')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BOOK 4 -->
+
+                <div
+                    class="book"
+                    data-category="aqeedah"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📙
+                        </div>
+
+                        <h3>
+                            العقيدة
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            أصول العقيدة
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: خالد إبراهيم
+                        </div>
+
+                        <p>
+                            دراسة في أصول ومباحث العقيدة.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('أصول العقيدة')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BOOK 5 -->
+
+                <div
+                    class="book"
+                    data-category="language"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📕
+                        </div>
+
+                        <h3>
+                            اللغة العربية
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            النحو العربي
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: علي محمود
+                        </div>
+
+                        <p>
+                            كتاب في قواعد النحو العربي.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('النحو العربي')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BOOK 6 -->
+
+                <div
+                    class="book"
+                    data-category="history"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📗
+                        </div>
+
+                        <h3>
+                            التاريخ
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            تاريخ العالم الإسلامي
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: محمود أحمد
+                        </div>
+
+                        <p>
+                            دراسة مختصرة في التاريخ الإسلامي.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('تاريخ العالم الإسلامي')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BOOK 7 -->
+
+                <div
+                    class="book"
+                    data-category="literature"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📘
+                        </div>
+
+                        <h3>
+                            الأدب
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            مختارات أدبية
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: يوسف أحمد
+                        </div>
+
+                        <p>
+                            مجموعة من النصوص الأدبية العربية.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('مختارات أدبية')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BOOK 8 -->
+
+                <div
+                    class="book"
+                    data-category="quran"
+                >
+
+                    <div class="cover">
+
+                        <div class="book-icon">
+                            📔
+                        </div>
+
+                        <h3>
+                            التفسير
+                        </h3>
+
+                    </div>
+
+                    <div class="book-info">
+
+                        <h3>
+                            أصول التفسير
+                        </h3>
+
+                        <div class="author">
+                            المؤلف: عبد الله حسن
+                        </div>
+
+                        <p>
+                            مباحث أساسية في علم التفسير.
+                        </p>
+
+                        <div class="buttons">
+
+                            <button
+                                class="read"
+                                onclick="readBook('أصول التفسير')"
+                            >
+                                📖 قراءة
+                            </button>
+
+                            <button
+                                class="download"
+                                onclick="downloadBook()"
+                            >
+                                ⬇
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <div
+                class="no-results"
+                id="noResults"
+            >
+                <h3>
+                    📚 لا توجد كتب
+                </h3>
+
+                <p>
+                    لم يتم العثور على كتاب مطابق للبحث.
+                </p>
+            </div>
+
+
+        </main>
+
+    </div>
+
+</div>
+
+
+
+<!-- ================= FOOTER ================= -->
+
+<footer>
+
+    <h3>
+        📚 المكتبة العربية
+    </h3>
+
+    <br>
+
+    <p>
+        مكتبة رقمية للكتب والمراجع العربية
+    </p>
+
+    <br>
+
+    <p>
+        © 2026 جميع الحقوق محفوظة
+    </p>
+
+</footer>
+
+
+
+<script>
+
+
+/* ================= SEARCH ================= */
+
+function searchBooks() {
+
+    const query =
+        document
+        .getElementById("search")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const books =
+        document.querySelectorAll(".book");
+
+    let count = 0;
+
+    books.forEach(book => {
+
+        const text =
+            book.innerText.toLowerCase();
+
+        if (text.includes(query)) {
+
+            book.style.display = "block";
+
+            count++;
+
+        } else {
+
+            book.style.display = "none";
+
+        }
+
+    });
+
+    document
+        .getElementById("bookCount")
+        .innerText = count + " كتب";
+
+    document
+        .getElementById("noResults")
+        .style.display =
+            count === 0
+            ? "block"
+            : "none";
+
+}
+
+
+/* ================= CATEGORY ================= */
+
+function filterBooks(category, button) {
+
+    document
+        .querySelectorAll(".category")
+        .forEach(btn => {
+
+            btn.classList.remove("active");
+
+        });
+
+    button.classList.add("active");
+
+    const books =
+        document.querySelectorAll(".book");
+
+    let count = 0;
+
+    books.forEach(book => {
+
+        const bookCategory =
+            book.getAttribute("data-category");
+
+        if (
+            category === "all" ||
+            bookCategory === category
+        ) {
+
+            book.style.display = "block";
+
+            count++;
+
+        } else {
+
+            book.style.display = "none";
+
+        }
+
+    });
+
+    document
+        .getElementById("bookCount")
+        .innerText = count + " كتب";
+
+    document
+        .getElementById("noResults")
+        .style.display =
+            count === 0
+            ? "block"
+            : "none";
+
+}
+
+
+/* ================= READER ================= */
+
+function readBook(title) {
+
+    alert(
+        "سيتم فتح الكتاب:\n\n" +
+        title +
+        "\n\nيمكنك لاحقاً ربط هذا الزر بصفحة قراءة PDF."
+    );
+
+}
+
+
+/* ================= DOWNLOAD ================= */
+
+function downloadBook() {
+
+    alert(
+        "ملف PDF غير مضاف حالياً.\n" +
+        "يمكنك ربط هذا الزر بملف PDF على الخادم."
+    );
+
+}
+
+</script>
+
+
+</body>
+</html>
