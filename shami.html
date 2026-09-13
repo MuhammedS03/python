@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>المكتبة العربية</title>
+
+<style>
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: "Tahoma", "Arial", sans-serif;
+    background: #f4f1e8;
+    color: #332b20;
+}
+
+/* HEADER */
+header {
+    background: #263d2b;
+    color: white;
+    padding: 18px 6%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    margin: 0 10px;
+    cursor: pointer;
+}
+
+nav a:hover {
+    color: #d8b45a;
+}
+
+/* HERO */
+.hero {
+    background:
+        linear-gradient(rgba(38,61,43,.9), rgba(38,61,43,.9)),
+        #263d2b;
+
+    color: white;
+    text-align: center;
+    padding: 65px 20px;
+}
+
+.hero h1 {
+    font-size: 42px;
+    margin-bottom: 15px;
+}
+
+.hero p {
+    font-size: 18px;
+    color: #e8dfc7;
+    margin-bottom: 30px;
+}
+
+/* SEARCH */
+.search {
+    max-width: 700px;
+    margin: auto;
+    display: flex;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.search input {
+    flex: 1;
+    padding: 16px;
+    border: none;
+    outline: none;
+    font-size: 17px;
+    text-align: right;
+}
+
+.search button {
+    background: #c59b3b;
+    color: white;
+    border: none;
+    padding: 0 25px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+/* CONTAINER */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 45px auto;
+}
+
+.section-title {
+    border-right: 5px solid #c59b3b;
+    padding-right: 12px;
+    margin-bottom: 25px;
+}
+
+.section-title h2 {
+    color: #263d2b;
+}
+
+/* CATEGORIES */
+.categories {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+}
+
+.category {
+    background: white;
+    padding: 25px;
+    text-align: center;
+    border-radius: 8px;
+    box-shadow: 0 3px 12px rgba(0,0,0,.08);
+    cursor: pointer;
+    transition: .3s;
+}
+
+.category:hover {
+    transform: translateY(-4px);
+    background: #fffaf0;
+}
+
+.category .icon {
+    font-size: 35px;
+    margin-bottom: 10px;
+}
+
+/* BOOKS */
+.books {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+}
+
+.book {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,.09);
+    transition: .3s;
+}
+
+.book:hover {
+    transform: translateY(-5px);
+}
+
+.book-cover {
+    height: 230px;
+    background: linear-gradient(135deg, #314d37, #1e3023);
+    color: #e2c46c;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.book-info {
+    padding: 18px;
+}
+
+.book-info h3 {
+    color: #263d2b;
+    margin-bottom: 10px;
+}
+
+.author {
+    color: #8b6a29;
+    margin-bottom: 10px;
+}
+
+.book-info p {
+    line-height: 1.7;
+    color: #666;
+}
+
+.read-btn {
+    width: 100%;
+    margin-top: 15px;
+    padding: 11px;
+    border: none;
+    border-radius: 5px;
+    background: #263d2b;
+    color: white;
+    cursor: pointer;
+}
+
+.read-btn:hover {
+    background: #38583f;
+}
+
+/* READER */
+.reader {
+    display: none;
+    background: #fffdf7;
+    padding: 35px;
+    border-radius: 10px;
+    box-shadow: 0 3px 15px rgba(0,0,0,.1);
+    line-height: 2.2;
+    font-size: 19px;
+}
+
+.reader h2 {
+    color: #263d2b;
+    margin-bottom: 20px;
+}
+
+.close-reader {
+    background: #a33;
+    color: white;
+    border: none;
+    padding: 9px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+/* LOGIN */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.65);
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal-box {
+    width: 90%;
+    max-width: 420px;
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+}
+
+.modal-box h2 {
+    color: #263d2b;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 7px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+.login-btn {
+    width: 100%;
+    padding: 12px;
+    background: #263d2b;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.close {
+    float: left;
+    cursor: pointer;
+    font-size: 22px;
+}
+
+/* FOOTER */
+footer {
+    background: #263d2b;
+    color: white;
+    text-align: center;
+    padding: 30px;
+    margin-top: 60px;
+}
+
+footer p {
+    color: #ddd;
+}
+
+/* MOBILE */
+@media(max-width:600px) {
+
+    header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .hero h1 {
+        font-size: 30px;
+    }
+
+    .search {
+        flex-direction: column;
+    }
+
+    .search button {
+        padding: 14px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<header>
+
+    <div class="logo">
+        📚 المكتبة العربية
+    </div>
+
+    <nav>
+        <a onclick="goHome()">الرئيسية</a>
+        <a onclick="showBooks()">الكتب</a>
+        <a onclick="showLogin()">تسجيل الدخول</a>
+    </nav>
+
+</header>
+
+
+<!-- HERO -->
+<section class="hero">
+
+    <h1>المكتبة العربية</h1>
+
+    <p>
+        مكتبة رقمية للكتب والمراجع العربية
+    </p>
+
+    <div class="search">
+
+        <input
+            type="text"
+            id="searchInput"
+            placeholder="ابحث عن كتاب أو مؤلف..."
+            onkeyup="searchBooks()"
+        >
+
+        <button onclick="searchBooks()">
+            🔍 بحث
+        </button>
+
+    </div>
+
+</section>
+
+
+<!-- CATEGORIES -->
+<section class="container">
+
+    <div class="section-title">
+        <h2>أقسام المكتبة</h2>
+    </div>
+
+    <div class="categories">
+
+        <div class="category">
+            <div class="icon">📖</div>
+            <h3>القرآن وعلومه</h3>
+        </div>
+
+        <div class="category">
+            <div class="icon">☪️</div>
+            <h3>الحديث</h3>
+        </div>
+
+        <div class="category">
+            <div class="icon">⚖️</div>
+            <h3>الفقه</h3>
+        </div>
+
+        <div class="category">
+            <div class="icon">📜</div>
+            <h3>العقيدة</h3>
+        </div>
+
+        <div class="category">
+            <div class="icon">✍️</div>
+            <h3>اللغة العربية</h3>
+        </div>
+
+        <div class="category">
+            <div class="icon">🏛️</div>
+            <h3>التاريخ</h3>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- BOOKS -->
+<section class="container" id="booksSection">
+
+    <div class="section-title">
+        <h2>أحدث الكتب</h2>
+    </div>
+
+    <div class="books" id="booksContainer">
+
+        <div class="book">
+
+            <div class="book-cover">
+                📕<br>
+                كتاب في علوم اللغة
+            </div>
+
+            <div class="book-info">
+
+                <h3>مدخل إلى اللغة العربية</h3>
+
+                <div class="author">
+                    المؤلف: أحمد علي
+                </div>
+
+                <p>
+                    كتاب تعليمي للتعرف على أساسيات اللغة العربية.
+                </p>
+
+                <button
+                    class="read-btn"
+                    onclick="openReader('مدخل إلى اللغة العربية')">
+
+                    📖 قراءة الكتاب
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="book">
+
+            <div class="book-cover">
+                📗<br>
+                كتاب في التاريخ
+            </div>
+
+            <div class="book-info">
+
+                <h3>دراسات في التاريخ</h3>
+
+                <div class="author">
+                    المؤلف: محمد حسن
+                </div>
+
+                <p>
+                    مجموعة من الدراسات والمقالات التاريخية.
+                </p>
+
+                <button
+                    class="read-btn"
+                    onclick="openReader('دراسات في التاريخ')">
+
+                    📖 قراءة الكتاب
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <div class="book">
+
+            <div class="book-cover">
+                📘<br>
+                كتاب في الأدب
+            </div>
+
+            <div class="book-info">
+
+                <h3>مختارات أدبية</h3>
+
+                <div class="author">
+                    المؤلف: خالد إبراهيم
+                </div>
+
+                <p>
+                    مجموعة مختارة من النصوص الأدبية العربية.
+                </p>
+
+                <button
+                    class="read-btn"
+                    onclick="openReader('مختارات أدبية')">
+
+                    📖 قراءة الكتاب
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- READER -->
+<section class="container">
+
+    <div class="reader" id="reader">
+
+        <button
+            class="close-reader"
+            onclick="closeReader()">
+
+            ✕ إغلاق الكتاب
+
+        </button>
+
+        <h2 id="readerTitle"></h2>
+
+        <p>
+            بسم الله الرحمن الرحيم
+        </p>
+
+        <br>
+
+        <p>
+            هذا نموذج لقارئ الكتب داخل المكتبة.
+            يمكنك هنا عرض النص الكامل للكتاب، أو ربط
+            الصفحة بملف PDF موجود على الخادم.
+        </p>
+
+        <br>
+
+        <p>
+            يمكن تطوير هذا القارئ ليحتوي على البحث داخل
+            الكتاب، تغيير حجم الخط، الوضع الليلي،
+            أرقام الصفحات، والفهرس.
+        </p>
+
+    </div>
+
+</section>
+
+
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+
+    <div class="modal-box">
+
+        <span class="close" onclick="closeLogin()">
+            ✕
+        </span>
+
+        <h2>تسجيل الدخول</h2>
+
+        <form onsubmit="login(event)">
+
+            <div class="form-group">
+
+                <label>البريد الإلكتروني</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    required
+                >
+
+            </div>
+
+            <div class="form-group">
+
+                <label>كلمة المرور</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    required
+                >
+
+            </div>
+
+            <button class="login-btn">
+                دخول
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- FOOTER -->
+<footer>
+
+    <h3>📚 المكتبة العربية</h3>
+
+    <br>
+
+    <p>
+        منصة رقمية للكتب والمراجع العربية
+    </p>
+
+    <br>
+
+    <p>
+        © 2026 جميع الحقوق محفوظة
+    </p>
+
+</footer>
+
+
+<script>
+
+/* BOOK DATA */
+
+const books = [
+
+    {
+        title: "مدخل إلى اللغة العربية",
+        author: "أحمد علي"
+    },
+
+    {
+        title: "دراسات في التاريخ",
+        author: "محمد حسن"
+    },
+
+    {
+        title: "مختارات أدبية",
+        author: "خالد إبراهيم"
+    }
+
+];
+
+
+/* SEARCH */
+
+function searchBooks() {
+
+    const query =
+        document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase();
+
+    const cards =
+        document.querySelectorAll(".book");
+
+    cards.forEach(card => {
+
+        const text =
+            card.innerText.toLowerCase();
+
+        if (text.includes(query)) {
+
+            card.style.display = "block";
+
+        } else {
+
+            card.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+/* READER */
+
+function openReader(title) {
+
+    document
+        .getElementById("readerTitle")
+        .innerText = title;
+
+    document
+        .getElementById("reader")
+        .style.display = "block";
+
+    document
+        .getElementById("reader")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+function closeReader() {
+
+    document
+        .getElementById("reader")
+        .style.display = "none";
+
+}
+
+
+/* LOGIN */
+
+function showLogin() {
+
+    document
+        .getElementById("loginModal")
+        .style.display = "flex";
+
+}
+
+
+function closeLogin() {
+
+    document
+        .getElementById("loginModal")
+        .style.display = "none";
+
+}
+
+
+function login(event) {
+
+    event.preventDefault();
+
+    const email =
+        document.getElementById("email").value;
+
+    const password =
+        document.getElementById("password").value;
+
+    if (
+        email === "admin@example.com" &&
+        password === "admin123"
+    ) {
+
+        alert("تم تسجيل الدخول بنجاح");
+
+        closeLogin();
+
+    } else {
+
+        alert("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+
+    }
+
+}
+
+
+/* NAVIGATION */
+
+function showBooks() {
+
+    document
+        .getElementById("booksSection")
+        .scrollIntoView({
+            behavior: "smooth"
+        });
+
+}
+
+
+function goHome() {
+
+    window.scrollTo({
+        top: 0,
+        behavior: "smooth"
+    });
+
+}
+
+</script>
+
+</body>
+</html>
