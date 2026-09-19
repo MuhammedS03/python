@@ -1,0 +1,2350 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>الفلك الشرعي - الحاسبة الفلكية</title>
+
+<style>
+:root{
+    --bg:#07111f;
+    --panel:#0e1d31;
+    --panel2:#13263e;
+    --gold:#e7b94c;
+    --gold2:#ffd978;
+    --text:#f4f7fb;
+    --muted:#9fb0c4;
+    --green:#55d69a;
+    --red:#ff7272;
+    --blue:#4ea8ff;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(circle at top,#132d4c 0,#07111f 45%,#040a12 100%);
+    color:var(--text);
+    font-family:
+        "Tahoma",
+        "Arial",
+        sans-serif;
+}
+
+header{
+    padding:25px 18px;
+    text-align:center;
+    border-bottom:1px solid #233952;
+    background:rgba(4,12,24,.85);
+    position:sticky;
+    top:0;
+    z-index:100;
+    backdrop-filter:blur(10px);
+}
+
+header h1{
+    margin:0;
+    color:var(--gold2);
+    font-size:clamp(25px,4vw,42px);
+}
+
+header p{
+    margin:8px 0 0;
+    color:var(--muted);
+}
+
+nav{
+    display:flex;
+    gap:8px;
+    overflow-x:auto;
+    padding:12px;
+    background:#081526;
+    position:sticky;
+    top:95px;
+    z-index:90;
+}
+
+nav button{
+    flex:0 0 auto;
+    background:#11243b;
+    color:#dfe9f5;
+    border:1px solid #28405c;
+    border-radius:9px;
+    padding:10px 15px;
+    cursor:pointer;
+}
+
+nav button:hover,
+nav button.active{
+    background:var(--gold);
+    color:#10151b;
+}
+
+main{
+    width:min(1400px,96%);
+    margin:25px auto 80px;
+}
+
+.section{
+    display:none;
+}
+
+.section.active{
+    display:block;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:15px;
+}
+
+.card{
+    background:linear-gradient(145deg,#102239,#0b1728);
+    border:1px solid #213a56;
+    border-radius:16px;
+    padding:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.2);
+}
+
+.card h2,
+.card h3{
+    color:var(--gold2);
+    margin-top:0;
+}
+
+label{
+    display:block;
+    color:var(--muted);
+    margin:10px 0 5px;
+}
+
+input,
+select,
+button,
+textarea{
+    font:inherit;
+}
+
+input,
+select{
+    width:100%;
+    padding:11px;
+    border-radius:8px;
+    border:1px solid #34506e;
+    background:#081525;
+    color:white;
+    outline:none;
+}
+
+input:focus,
+select:focus{
+    border-color:var(--gold);
+}
+
+.btn{
+    margin-top:12px;
+    padding:11px 16px;
+    border:0;
+    border-radius:9px;
+    cursor:pointer;
+    background:var(--gold);
+    color:#10151b;
+    font-weight:bold;
+}
+
+.btn.secondary{
+    background:#183653;
+    color:white;
+}
+
+.result{
+    margin-top:15px;
+    padding:14px;
+    background:#071321;
+    border-radius:10px;
+    border:1px solid #203a55;
+    line-height:1.9;
+}
+
+.value{
+    color:var(--gold2);
+    font-size:20px;
+    font-weight:bold;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:10px;
+}
+
+th,td{
+    border-bottom:1px solid #263d56;
+    padding:10px;
+    text-align:center;
+}
+
+th{
+    color:var(--gold2);
+}
+
+.small{
+    color:var(--muted);
+    font-size:13px;
+}
+
+canvas{
+    display:block;
+    width:100%;
+    background:
+        radial-gradient(circle at center,#061a31,#020711);
+    border-radius:15px;
+    border:1px solid #203b58;
+}
+
+.bigCanvas{
+    height:600px;
+}
+
+#skyCanvas{
+    height:450px;
+}
+
+.badge{
+    display:inline-block;
+    padding:4px 9px;
+    border-radius:20px;
+    background:#193553;
+    color:#cfe5ff;
+    margin:3px;
+}
+
+footer{
+    text-align:center;
+    padding:30px;
+    color:var(--muted);
+    border-top:1px solid #20344b;
+}
+
+hr{
+    border:0;
+    border-top:1px solid #263c55;
+    margin:20px 0;
+}
+
+@media(max-width:600px){
+    nav{
+        top:91px;
+    }
+
+    .bigCanvas{
+        height:430px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>🌙 الفلك الشرعي</h1>
+    <p>الحسابات الفلكية والمواقيت والقبلة والظل والشفق وحركة الأجرام</p>
+</header>
+
+<nav>
+    <button class="tab active" data-target="home">الرئيسية</button>
+    <button class="tab" data-target="trig">الحسابات</button>
+    <button class="tab" data-target="location">الموقع</button>
+    <button class="tab" data-target="prayer">المواقيت</button>
+    <button class="tab" data-target="qibla">القبلة</button>
+    <button class="tab" data-target="shadow">الظل</button>
+    <button class="tab" data-target="twilight">الشفق</button>
+    <button class="tab" data-target="solar">الشمس</button>
+    <button class="tab" data-target="animation">الأنمي الفلكي</button>
+</nav>
+
+<main>
+
+<!-- ================= الرئيسية ================= -->
+
+<section id="home" class="section active">
+
+<div class="grid">
+
+<div class="card">
+<h2>📍 الموقع الحالي</h2>
+
+<p>
+خط العرض:
+<span class="value" id="homeLat">—</span>
+</p>
+
+<p>
+خط الطول:
+<span class="value" id="homeLon">—</span>
+</p>
+
+<button class="btn" onclick="getLocation()">
+استخدام موقعي
+</button>
+</div>
+
+<div class="card">
+<h2>🕰 الوقت</h2>
+
+<p id="currentDate">—</p>
+
+<p>
+الوقت المحلي:
+<span class="value" id="clock">—</span>
+</p>
+</div>
+
+<div class="card">
+<h2>☀️ الشمس</h2>
+
+<p>
+الارتفاع:
+<span class="value" id="homeSunAlt">—</span>
+</p>
+
+<p>
+السمت:
+<span class="value" id="homeSunAz">—</span>
+</p>
+</div>
+
+<div class="card">
+<h2>🧭 القبلة</h2>
+
+<p>
+اتجاه القبلة:
+<span class="value" id="homeQibla">—</span>
+</p>
+</div>
+
+</div>
+
+<div class="card" style="margin-top:20px">
+<h2>🌌 السماء الآن</h2>
+<canvas id="skyCanvas"></canvas>
+</div>
+
+</section>
+
+
+<!-- ================= الحسابات ================= -->
+
+<section id="trig" class="section">
+
+<div class="card">
+
+<h2>📐 آلة الحساب المثلثي</h2>
+
+<div class="grid">
+
+<div>
+<label>الزاوية</label>
+<input id="angleInput" type="number" value="30">
+</div>
+
+<div>
+<label>الوحدة</label>
+<select id="angleUnit">
+<option value="deg">درجة</option>
+<option value="rad">راديان</option>
+</select>
+</div>
+
+</div>
+
+<button class="btn" onclick="calculateTrig()">
+احسب
+</button>
+
+<div class="result" id="trigResult">
+أدخل الزاوية واضغط احسب.
+</div>
+
+</div>
+
+
+<div class="card" style="margin-top:20px">
+
+<h2>🔢 تحويل الدرجات والراديان</h2>
+
+<div class="grid">
+
+<div>
+<label>الدرجات</label>
+<input id="degInput" type="number">
+</div>
+
+<div>
+<label>الراديان</label>
+<input id="radInput" type="number">
+</div>
+
+</div>
+
+<button class="btn" onclick="degToRad()">
+درجة → راديان
+</button>
+
+<button class="btn secondary" onclick="radToDeg()">
+راديان → درجة
+</button>
+
+</div>
+
+</section>
+
+
+<!-- ================= الموقع ================= -->
+
+<section id="location" class="section">
+
+<div class="card">
+
+<h2>📍 إحداثيات المكان</h2>
+
+<div class="grid">
+
+<div>
+<label>خط العرض Latitude</label>
+<input id="lat" type="number" step="0.000001" value="47.3769">
+</div>
+
+<div>
+<label>خط الطول Longitude</label>
+<input id="lon" type="number" step="0.000001" value="8.5417">
+</div>
+
+<div>
+<label>الارتفاع عن سطح البحر بالمتر</label>
+<input id="elevation" type="number" value="400">
+</div>
+
+</div>
+
+<button class="btn" onclick="saveLocation()">
+حفظ الموقع
+</button>
+
+<button class="btn secondary" onclick="getLocation()">
+📡 تحديد GPS
+</button>
+
+<div class="result" id="locationResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= المواقيت ================= -->
+
+<section id="prayer" class="section">
+
+<div class="card">
+
+<h2>🕌 أوقات الصلاة الفلكية</h2>
+
+<div class="grid">
+
+<div>
+<label>التاريخ</label>
+<input id="prayerDate" type="date">
+</div>
+
+<div>
+<label>خط العرض</label>
+<input id="prayerLat" type="number" step="0.000001">
+</div>
+
+<div>
+<label>خط الطول</label>
+<input id="prayerLon" type="number" step="0.000001">
+</div>
+
+<div>
+<label>المنطقة الزمنية UTC</label>
+<input id="timezone" type="number" step="0.5">
+</div>
+
+<div>
+<label>زاوية الفجر</label>
+<input id="fajrAngle" type="number" value="18">
+</div>
+
+<div>
+<label>زاوية العشاء</label>
+<input id="ishaAngle" type="number" value="18">
+</div>
+
+<div>
+<label>طريقة العصر</label>
+<select id="asrMethod">
+<option value="1">ظل المثل</option>
+<option value="2">ظل المثلين</option>
+</select>
+</div>
+
+</div>
+
+<button class="btn" onclick="calculatePrayerTimes()">
+احسب المواقيت
+</button>
+
+<div class="result">
+<table>
+<thead>
+<tr>
+<th>الوقت</th>
+<th>الساعة</th>
+</tr>
+</thead>
+
+<tbody id="prayerTable"></tbody>
+</table>
+</div>
+
+<p class="small">
+تنبيه: هذه حسابات فلكية تقريبية، ويجب ضبط طريقة الحساب والمذهب
+ومعايير المؤسسة المحلية عند استعمالها كمواقيت رسمية.
+</p>
+
+</div>
+
+</section>
+
+
+<!-- ================= القبلة ================= -->
+
+<section id="qibla" class="section">
+
+<div class="card">
+
+<h2>🕋 حساب اتجاه القبلة</h2>
+
+<div class="grid">
+
+<div>
+<label>خط العرض</label>
+<input id="qLat" type="number" step="0.000001">
+</div>
+
+<div>
+<label>خط الطول</label>
+<input id="qLon" type="number" step="0.000001">
+</div>
+
+</div>
+
+<button class="btn" onclick="calculateQibla()">
+احسب القبلة
+</button>
+
+<div class="result" id="qiblaResult"></div>
+
+<canvas id="qiblaCanvas" style="height:400px;margin-top:20px"></canvas>
+
+</div>
+
+</section>
+
+
+<!-- ================= الظل ================= -->
+
+<section id="shadow" class="section">
+
+<div class="card">
+
+<h2>📏 حساب الظل</h2>
+
+<div class="grid">
+
+<div>
+<label>ارتفاع الجسم بالمتر</label>
+<input id="objectHeight" type="number" value="1">
+</div>
+
+<div>
+<label>ارتفاع الشمس بالدرجة</label>
+<input id="sunAltitude" type="number" value="45">
+</div>
+
+</div>
+
+<button class="btn" onclick="calculateShadow()">
+احسب
+</button>
+
+<div class="result" id="shadowResult"></div>
+
+</div>
+
+
+<div class="card" style="margin-top:20px">
+
+<h2>ظل المثل وظل المثلين</h2>
+
+<div class="grid">
+
+<div>
+<label>ارتفاع الشمس</label>
+<input id="shadowAlt" type="number" value="45">
+</div>
+
+</div>
+
+<button class="btn" onclick="calculateMithl()">
+حساب ظل المثل
+</button>
+
+<div class="result" id="mithlResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= الشفق ================= -->
+
+<section id="twilight" class="section">
+
+<div class="card">
+
+<h2>🌄 أنواع الشفق</h2>
+
+<div class="grid">
+
+<div>
+<label>زاوية الشفق المدني</label>
+<input id="civilAngle" type="number" value="6">
+</div>
+
+<div>
+<label>زاوية الشفق البحري</label>
+<input id="nauticalAngle" type="number" value="12">
+</div>
+
+<div>
+<label>زاوية الشفق الفلكي</label>
+<input id="astroAngle" type="number" value="18">
+</div>
+
+</div>
+
+<button class="btn" onclick="calculateTwilight()">
+احسب الشفق
+</button>
+
+<div class="result" id="twilightResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= الشمس ================= -->
+
+<section id="solar" class="section">
+
+<div class="card">
+
+<h2>☀️ موضع الشمس</h2>
+
+<div class="grid">
+
+<div>
+<label>التاريخ</label>
+<input id="solarDate" type="datetime-local">
+</div>
+
+<div>
+<label>خط العرض</label>
+<input id="solarLat" type="number" step="0.000001">
+</div>
+
+<div>
+<label>خط الطول</label>
+<input id="solarLon" type="number" step="0.000001">
+</div>
+
+</div>
+
+<button class="btn" onclick="calculateSunPosition()">
+احسب موضع الشمس
+</button>
+
+<div class="result" id="solarResult"></div>
+
+</div>
+
+</section>
+
+
+<!-- ================= الحركة الفلكية ================= -->
+
+<section id="animation" class="section">
+
+<div class="card">
+
+<h2>🌌 المحاكاة الفلكية</h2>
+
+<p class="small">
+المحاكاة التالية تعليمية وليست مقياساً حقيقياً لأحجام الأجرام أو
+المسافات بينها.
+</p>
+
+<canvas id="spaceCanvas" class="bigCanvas"></canvas>
+
+<div style="margin-top:15px">
+
+<button class="btn" onclick="toggleAnimation()">
+⏯ إيقاف / تشغيل
+</button>
+
+<button class="btn secondary" onclick="resetAnimation()">
+↻ إعادة
+</button>
+
+<label>سرعة الحركة</label>
+
+<input id="animationSpeed"
+       type="range"
+       min="0.1"
+       max="20"
+       step="0.1"
+       value="2">
+
+</div>
+
+</div>
+
+<div class="card" style="margin-top:20px">
+
+<h2>الأجرام</h2>
+
+<span class="badge">☀ الشمس</span>
+<span class="badge">🌍 الأرض</span>
+<span class="badge">🌙 القمر</span>
+<span class="badge">☿ عطارد</span>
+<span class="badge">♀ الزهرة</span>
+<span class="badge">♂ المريخ</span>
+<span class="badge">♃ المشتري</span>
+<span class="badge">♄ زحل</span>
+<span class="badge">♅ أورانوس</span>
+<span class="badge">♆ نبتون</span>
+
+</div>
+
+</section>
+
+</main>
+
+<footer>
+الفلك الشرعي — منصة تعليمية للحسابات الفلكية
+</footer>
+
+
+<script>
+
+/* =========================================================
+   أدوات رياضية
+========================================================= */
+
+const PI = Math.PI;
+
+function degToRadValue(x){
+    return x * PI / 180;
+}
+
+function radToDegValue(x){
+    return x * 180 / PI;
+}
+
+function sinDeg(x){
+    return Math.sin(degToRadValue(x));
+}
+
+function cosDeg(x){
+    return Math.cos(degToRadValue(x));
+}
+
+function tanDeg(x){
+    return Math.tan(degToRadValue(x));
+}
+
+function fix360(x){
+    return ((x % 360) + 360) % 360;
+}
+
+function pad(n){
+    return String(Math.floor(n)).padStart(2,"0");
+}
+
+function formatTime(hours){
+
+    if(hours === null || !isFinite(hours))
+        return "—";
+
+    hours = (hours + 24) % 24;
+
+    let h = Math.floor(hours);
+    let m = Math.floor((hours-h)*60);
+    let s = Math.floor((((hours-h)*60)-m)*60);
+
+    if(m >= 60){
+        m -= 60;
+        h++;
+    }
+
+    return `${pad(h)}:${pad(m)}:${pad(s)}`;
+}
+
+
+/* =========================================================
+   التاريخ
+========================================================= */
+
+function julianDay(date){
+
+    let y = date.getUTCFullYear();
+    let m = date.getUTCMonth()+1;
+    let d =
+        date.getUTCDate() +
+        (date.getUTCHours() +
+        date.getUTCMinutes()/60 +
+        date.getUTCSeconds()/3600)/24;
+
+    if(m <= 2){
+        y--;
+        m += 12;
+    }
+
+    let A = Math.floor(y/100);
+    let B = 2-A+Math.floor(A/4);
+
+    return Math.floor(365.25*(y+4716))
+         + Math.floor(30.6001*(m+1))
+         + d+B-1524.5;
+}
+
+
+/* =========================================================
+   موضع الشمس
+========================================================= */
+
+function solarCoordinates(date){
+
+    const jd = julianDay(date);
+
+    const T = (jd - 2451545.0) / 36525;
+
+    let L0 = fix360(
+        280.46646 +
+        36000.76983*T +
+        0.0003032*T*T
+    );
+
+    let M = fix360(
+        357.52911 +
+        35999.05029*T -
+        0.0001537*T*T
+    );
+
+    let C =
+        (1.914602 - 0.004817*T - 0.000014*T*T) * sinDeg(M)
+        +
+        (0.019993 - 0.000101*T) * sinDeg(2*M)
+        +
+        0.000289 * sinDeg(3*M);
+
+    let trueLong = L0 + C;
+
+    let omega =
+        125.04 - 1934.136*T;
+
+    let lambda =
+        trueLong -
+        0.00569 -
+        0.00478*sinDeg(omega);
+
+    let epsilon =
+        23.439291 -
+        0.0130042*T;
+
+    let ra =
+        radToDegValue(
+            Math.atan2(
+                cosDeg(epsilon)*sinDeg(lambda),
+                cosDeg(lambda)
+            )
+        );
+
+    let dec =
+        radToDegValue(
+            Math.asin(
+                sinDeg(epsilon)*sinDeg(lambda)
+            )
+        );
+
+    ra = fix360(ra);
+
+    return {
+        ra,
+        dec,
+        longitude:trueLong
+    };
+}
+
+
+/* =========================================================
+   الزمن النجمي
+========================================================= */
+
+function greenwichSiderealTime(date){
+
+    const jd = julianDay(date);
+
+    const T =
+        (jd - 2451545.0)/36525;
+
+    let gst =
+        280.46061837 +
+        360.98564736629*(jd-2451545) +
+        0.000387933*T*T -
+        T*T*T/38710000;
+
+    return fix360(gst);
+}
+
+
+/* =========================================================
+   ارتفاع وسمت الشمس
+========================================================= */
+
+function sunHorizontal(date, lat, lon){
+
+    const sun = solarCoordinates(date);
+
+    let lst =
+        fix360(
+            greenwichSiderealTime(date)+lon
+        );
+
+    let hourAngle =
+        fix360(lst-sun.ra);
+
+    if(hourAngle > 180)
+        hourAngle -= 360;
+
+    let H = degToRadValue(hourAngle);
+
+    let phi = degToRadValue(lat);
+
+    let dec = degToRadValue(sun.dec);
+
+    let altitude =
+        Math.asin(
+            Math.sin(phi)*Math.sin(dec) +
+            Math.cos(phi)*Math.cos(dec)*Math.cos(H)
+        );
+
+    let az =
+        Math.atan2(
+            Math.sin(H),
+            Math.cos(H)*Math.sin(phi) -
+            Math.tan(dec)*Math.cos(phi)
+        );
+
+    let altitudeDeg =
+        radToDegValue(altitude);
+
+    let azDeg =
+        fix360(radToDegValue(az)+180);
+
+    return {
+        altitude:altitudeDeg,
+        azimuth:azDeg,
+        declination:sun.dec
+    };
+}
+
+
+/* =========================================================
+   حاسبة المثلثات
+========================================================= */
+
+function calculateTrig(){
+
+    let x =
+        Number(document.getElementById("angleInput").value);
+
+    let unit =
+        document.getElementById("angleUnit").value;
+
+    let r =
+        unit === "deg"
+        ? degToRadValue(x)
+        : x;
+
+    let d = radToDegValue(r);
+
+    document.getElementById("trigResult").innerHTML = `
+        الزاوية بالدرجات:
+        <span class="value">${d.toFixed(8)}°</span>
+        <br>
+
+        الزاوية بالراديان:
+        <span class="value">${r.toFixed(10)}</span>
+        <br>
+
+        الجيب sin:
+        <span class="value">${Math.sin(r).toFixed(10)}</span>
+        <br>
+
+        جيب التمام cos:
+        <span class="value">${Math.cos(r).toFixed(10)}</span>
+        <br>
+
+        الظل tan:
+        <span class="value">${Math.tan(r).toFixed(10)}</span>
+    `;
+}
+
+function degToRad(){
+
+    let d =
+        Number(document.getElementById("degInput").value);
+
+    document.getElementById("radInput").value =
+        degToRadValue(d).toFixed(10);
+}
+
+function radToDeg(){
+
+    let r =
+        Number(document.getElementById("radInput").value);
+
+    document.getElementById("degInput").value =
+        radToDegValue(r).toFixed(8);
+}
+
+
+/* =========================================================
+   الموقع
+========================================================= */
+
+function saveLocation(){
+
+    const lat =
+        Number(document.getElementById("lat").value);
+
+    const lon =
+        Number(document.getElementById("lon").value);
+
+    localStorage.setItem(
+        "astroLat",
+        lat
+    );
+
+    localStorage.setItem(
+        "astroLon",
+        lon
+    );
+
+    localStorage.setItem(
+        "astroElevation",
+        Number(document.getElementById("elevation").value)
+    );
+
+    applyLocation();
+
+    document.getElementById("locationResult").innerHTML =
+        `تم حفظ الموقع:<br>
+        خط العرض: <b>${lat}</b><br>
+        خط الطول: <b>${lon}</b>`;
+}
+
+
+function applyLocation(){
+
+    let lat =
+        Number(localStorage.getItem("astroLat"));
+
+    let lon =
+        Number(localStorage.getItem("astroLon"));
+
+    if(!isFinite(lat)) lat = 47.3769;
+    if(!isFinite(lon)) lon = 8.5417;
+
+    document.getElementById("lat").value = lat;
+    document.getElementById("lon").value = lon;
+
+    document.getElementById("prayerLat").value = lat;
+    document.getElementById("prayerLon").value = lon;
+
+    document.getElementById("qLat").value = lat;
+    document.getElementById("qLon").value = lon;
+
+    document.getElementById("solarLat").value = lat;
+    document.getElementById("solarLon").value = lon;
+
+    document.getElementById("homeLat").textContent =
+        lat.toFixed(6)+"°";
+
+    document.getElementById("homeLon").textContent =
+        lon.toFixed(6)+"°";
+}
+
+
+/* =========================================================
+   GPS
+========================================================= */
+
+function getLocation(){
+
+    if(!navigator.geolocation){
+
+        alert("المتصفح لا يدعم تحديد الموقع.");
+
+        return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+        position => {
+
+            const lat =
+                position.coords.latitude;
+
+            const lon =
+                position.coords.longitude;
+
+            document.getElementById("lat").value = lat;
+            document.getElementById("lon").value = lon;
+
+            document.getElementById("prayerLat").value = lat;
+            document.getElementById("prayerLon").value = lon;
+
+            document.getElementById("qLat").value = lat;
+            document.getElementById("qLon").value = lon;
+
+            document.getElementById("solarLat").value = lat;
+            document.getElementById("solarLon").value = lon;
+
+            applyLocation();
+
+            saveLocation();
+
+        },
+        error => {
+
+            alert(
+                "تعذر الحصول على الموقع. تأكد من السماح للموقع."
+            );
+
+        },
+        {
+            enableHighAccuracy:true,
+            timeout:10000
+        }
+    );
+}
+
+
+/* =========================================================
+   القبلة
+========================================================= */
+
+function calculateQibla(){
+
+    const lat =
+        Number(document.getElementById("qLat").value);
+
+    const lon =
+        Number(document.getElementById("qLon").value);
+
+    // إحداثيات الكعبة
+    const kaabaLat =
+        21.422487;
+
+    const kaabaLon =
+        39.826206;
+
+    const phi1 =
+        degToRadValue(lat);
+
+    const phi2 =
+        degToRadValue(kaabaLat);
+
+    const deltaLon =
+        degToRadValue(kaabaLon-lon);
+
+    const y =
+        Math.sin(deltaLon);
+
+    const x =
+        Math.cos(phi1)*Math.tan(phi2) -
+        Math.sin(phi1)*Math.cos(deltaLon);
+
+    const bearing =
+        fix360(
+            radToDegValue(
+                Math.atan2(y,x)
+            )
+        );
+
+    document.getElementById("qiblaResult").innerHTML = `
+        اتجاه القبلة من الشمال:
+        <span class="value">${bearing.toFixed(4)}°</span>
+
+        <br>
+
+        أي اتجاه ${directionName(bearing)}.
+    `;
+
+    drawQibla(bearing);
+}
+
+
+function directionName(deg){
+
+    const names = [
+        "شمال",
+        "شمال شرقي",
+        "شرق",
+        "جنوب شرقي",
+        "جنوب",
+        "جنوب غربي",
+        "غرب",
+        "شمال غربي"
+    ];
+
+    return names[
+        Math.round(deg/45)%8
+    ];
+}
+
+
+function drawQibla(bearing){
+
+    const canvas =
+        document.getElementById("qiblaCanvas");
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const w =
+        canvas.width = canvas.clientWidth*2;
+
+    const h =
+        canvas.height = canvas.clientHeight*2;
+
+    ctx.clearRect(0,0,w,h);
+
+    const cx = w/2;
+    const cy = h/2;
+    const r = Math.min(w,h)*.35;
+
+    ctx.strokeStyle="#36506c";
+    ctx.lineWidth=5;
+
+    ctx.beginPath();
+    ctx.arc(cx,cy,r,0,Math.PI*2);
+    ctx.stroke();
+
+    ctx.fillStyle="#fff";
+    ctx.font="40px Arial";
+    ctx.textAlign="center";
+
+    ctx.fillText("ش",cx,cy-r-15);
+    ctx.fillText("ج",cx,cy+r+45);
+    ctx.fillText("غ",cx-r-35,cy+15);
+    ctx.fillText("ق",cx+r+35,cy+15);
+
+    let a =
+        degToRadValue(bearing-90);
+
+    let x =
+        cx + Math.cos(a)*r;
+
+    let y =
+        cy + Math.sin(a)*r;
+
+    ctx.strokeStyle="#e7b94c";
+    ctx.lineWidth=12;
+
+    ctx.beginPath();
+    ctx.moveTo(cx,cy);
+    ctx.lineTo(x,y);
+    ctx.stroke();
+
+    ctx.fillStyle="#ffd978";
+    ctx.beginPath();
+    ctx.arc(x,y,18,0,Math.PI*2);
+    ctx.fill();
+}
+
+
+/* =========================================================
+   معادلة الزمن
+========================================================= */
+
+function equationOfTime(date){
+
+    const jd =
+        julianDay(date);
+
+    const T =
+        (jd-2451545)/36525;
+
+    const L0 =
+        fix360(
+            280.46646 +
+            36000.76983*T
+        );
+
+    const M =
+        degToRadValue(
+            fix360(
+                357.52911 +
+                35999.05029*T
+            )
+        );
+
+    const e =
+        0.016708634 -
+        0.000042037*T;
+
+    const epsilon =
+        degToRadValue(
+            23.439291 -
+            0.0130042*T
+        );
+
+    const y =
+        Math.tan(epsilon/2) ** 2;
+
+    const L =
+        degToRadValue(L0);
+
+    let Etime =
+        y*Math.sin(2*L)
+        -2*e*Math.sin(M)
+        +4*e*y*Math.sin(M)*Math.cos(2*L)
+        -0.5*y*y*Math.sin(4*L)
+        -1.25*e*e*Math.sin(2*M);
+
+    return radToDegValue(Etime)*4;
+}
+
+
+/* =========================================================
+   حساب وقت الظهر
+========================================================= */
+
+function solarNoon(date, lon, timezone){
+
+    const noon =
+        720 -
+        4*lon -
+        equationOfTime(date) +
+        timezone*60;
+
+    return noon/60;
+}
+
+
+/* =========================================================
+   ساعة زاوية الشمس
+========================================================= */
+
+function hourAngleForAltitude(
+    lat,
+    declination,
+    altitude
+){
+
+    const p =
+        degToRadValue(lat);
+
+    const d =
+        degToRadValue(declination);
+
+    const h =
+        degToRadValue(altitude);
+
+    let value =
+        (
+            Math.sin(h) -
+            Math.sin(p)*Math.sin(d)
+        ) /
+        (
+            Math.cos(p)*Math.cos(d)
+        );
+
+    if(value < -1 || value > 1)
+        return null;
+
+    return radToDegValue(
+        Math.acos(value)
+    );
+}
+
+
+/* =========================================================
+   المواقيت
+========================================================= */
+
+function calculatePrayerTimes(){
+
+    const dateValue =
+        document.getElementById("prayerDate").value;
+
+    let date;
+
+    if(dateValue){
+
+        date =
+            new Date(dateValue+"T12:00:00Z");
+
+    }else{
+
+        date = new Date();
+
+    }
+
+    const lat =
+        Number(document.getElementById("prayerLat").value);
+
+    const lon =
+        Number(document.getElementById("prayerLon").value);
+
+    let timezone =
+        Number(document.getElementById("timezone").value);
+
+    if(!isFinite(timezone)){
+
+        timezone =
+            -date.getTimezoneOffset()/60;
+
+    }
+
+    const fajrAngle =
+        Number(document.getElementById("fajrAngle").value);
+
+    const ishaAngle =
+        Number(document.getElementById("ishaAngle").value);
+
+    const asrFactor =
+        Number(document.getElementById("asrMethod").value);
+
+    const noon =
+        solarNoon(date,lon,timezone);
+
+    const sun =
+        solarCoordinates(date);
+
+    const decl =
+        sun.dec;
+
+    function timeForAngle(angle){
+
+        const H =
+            hourAngleForAltitude(
+                lat,
+                decl,
+                angle
+            );
+
+        if(H===null)
+            return null;
+
+        return noon - H/15;
+    }
+
+    const sunrise =
+        timeForAngle(-0.833);
+
+    const sunset =
+        noon*2-sunrise;
+
+    const fajr =
+        timeForAngle(-fajrAngle);
+
+    const isha =
+        timeForAngle(-ishaAngle);
+
+    let asrAltitude;
+
+    /*
+      طريقة تقريبية لحساب العصر:
+      ظل الجسم = عامل المثل
+    */
+
+    const phi =
+        degToRadValue(lat);
+
+    const dec =
+        degToRadValue(decl);
+
+    const factor =
+        asrFactor;
+
+    const acot =
+        Math.atan(
+            1/
+            (
+                factor +
+                Math.tan(
+                    Math.abs(phi-dec)
+                )
+            )
+        );
+
+    asrAltitude =
+        radToDegValue(acot);
+
+    const asrAngle =
+        hourAngleForAltitude(
+            lat,
+            decl,
+            asrAltitude
+        );
+
+    let asr =
+        asrAngle === null
+        ? null
+        : noon + asrAngle/15;
+
+    let maghrib =
+        sunset;
+
+    let table = [
+
+        ["الفجر",formatTime(fajr)],
+
+        ["الشروق",formatTime(sunrise)],
+
+        ["الظهر",formatTime(noon)],
+
+        ["العصر",formatTime(asr)],
+
+        ["المغرب",formatTime(maghrib)],
+
+        ["العشاء",formatTime(isha)]
+
+    ];
+
+    document.getElementById("prayerTable").innerHTML =
+        table.map(row =>
+            `<tr>
+                <td>${row[0]}</td>
+                <td class="value">${row[1]}</td>
+            </tr>`
+        ).join("");
+
+}
+
+
+/* =========================================================
+   الظل
+========================================================= */
+
+function calculateShadow(){
+
+    const height =
+        Number(
+            document.getElementById("objectHeight").value
+        );
+
+    const altitude =
+        Number(
+            document.getElementById("sunAltitude").value
+        );
+
+    if(altitude <= 0){
+
+        document.getElementById("shadowResult").innerHTML =
+            "الشمس تحت الأفق، فلا يوجد ظل شمسي مباشر.";
+
+        return;
+    }
+
+    const shadow =
+        height /
+        Math.tan(
+            degToRadValue(altitude)
+        );
+
+    document.getElementById("shadowResult").innerHTML = `
+        طول الظل =
+        <span class="value">${shadow.toFixed(4)} متر</span>
+        <br>
+        ارتفاع الجسم =
+        ${height} متر
+        <br>
+        ارتفاع الشمس =
+        ${altitude}°
+    `;
+}
+
+
+/* =========================================================
+   ظل المثل
+========================================================= */
+
+function calculateMithl(){
+
+    const altitude =
+        Number(
+            document.getElementById("shadowAlt").value
+        );
+
+    if(altitude <= 0){
+
+        document.getElementById("mithlResult").innerHTML =
+            "لا يمكن الحساب والشمس تحت الأفق.";
+
+        return;
+    }
+
+    /*
+      طول الظل = cot(ارتفاع الشمس)
+    */
+
+    const shadow =
+        1 /
+        Math.tan(
+            degToRadValue(altitude)
+        );
+
+    const mithl =
+        1 + shadow;
+
+    const mithlain =
+        2 + shadow;
+
+    document.getElementById("mithlResult").innerHTML = `
+        ظل الأصل =
+        <span class="value">${shadow.toFixed(5)}</span>
+        من ارتفاع الجسم.
+
+        <br>
+
+        ظل المثل =
+        <span class="value">${mithl.toFixed(5)}</span>
+
+        <br>
+
+        ظل المثلين =
+        <span class="value">${mithlain.toFixed(5)}</span>
+    `;
+}
+
+
+/* =========================================================
+   الشفق
+========================================================= */
+
+function calculateTwilight(){
+
+    const dateValue =
+        document.getElementById("prayerDate").value;
+
+    let date =
+        dateValue
+        ? new Date(dateValue+"T12:00:00Z")
+        : new Date();
+
+    const lat =
+        Number(document.getElementById("prayerLat").value);
+
+    const lon =
+        Number(document.getElementById("prayerLon").value);
+
+    let timezone =
+        Number(document.getElementById("timezone").value);
+
+    if(!isFinite(timezone))
+        timezone =
+            -date.getTimezoneOffset()/60;
+
+    const sun =
+        solarCoordinates(date);
+
+    const noon =
+        solarNoon(date,lon,timezone);
+
+    const decl =
+        sun.dec;
+
+    function pair(angle){
+
+        const H =
+            hourAngleForAltitude(
+                lat,
+                decl,
+                -angle
+            );
+
+        if(H===null)
+            return ["—","—"];
+
+        return [
+            formatTime(noon-H/15),
+            formatTime(noon+H/15)
+        ];
+    }
+
+    const civil =
+        pair(
+            Number(
+                document.getElementById("civilAngle").value
+            )
+        );
+
+    const nautical =
+        pair(
+            Number(
+                document.getElementById("nauticalAngle").value
+            )
+        );
+
+    const astronomical =
+        pair(
+            Number(
+                document.getElementById("astroAngle").value
+            )
+        );
+
+    document.getElementById("twilightResult").innerHTML = `
+
+    <table>
+
+    <tr>
+        <th>نوع الشفق</th>
+        <th>البداية</th>
+        <th>النهاية</th>
+    </tr>
+
+    <tr>
+        <td>مدني</td>
+        <td>${civil[0]}</td>
+        <td>${civil[1]}</td>
+    </tr>
+
+    <tr>
+        <td>بحري</td>
+        <td>${nautical[0]}</td>
+        <td>${nautical[1]}</td>
+    </tr>
+
+    <tr>
+        <td>فلكي</td>
+        <td>${astronomical[0]}</td>
+        <td>${astronomical[1]}</td>
+    </tr>
+
+    </table>
+    `;
+}
+
+
+/* =========================================================
+   الشمس
+========================================================= */
+
+function calculateSunPosition(){
+
+    const value =
+        document.getElementById("solarDate").value;
+
+    const date =
+        value
+        ? new Date(value)
+        : new Date();
+
+    const lat =
+        Number(document.getElementById("solarLat").value);
+
+    const lon =
+        Number(document.getElementById("solarLon").value);
+
+    const result =
+        sunHorizontal(
+            date,
+            lat,
+            lon
+        );
+
+    const coords =
+        solarCoordinates(date);
+
+    document.getElementById("solarResult").innerHTML = `
+
+        ارتفاع الشمس:
+        <span class="value">
+        ${result.altitude.toFixed(5)}°
+        </span>
+
+        <br>
+
+        سمت الشمس:
+        <span class="value">
+        ${result.azimuth.toFixed(5)}°
+        </span>
+
+        <br>
+
+        ميل الشمس:
+        <span class="value">
+        ${coords.dec.toFixed(5)}°
+        </span>
+
+        <br>
+
+        المطلع المستقيم:
+        <span class="value">
+        ${coords.ra.toFixed(5)}°
+        </span>
+    `;
+
+}
+
+
+/* =========================================================
+   الساعة
+========================================================= */
+
+function updateClock(){
+
+    const now =
+        new Date();
+
+    document.getElementById("clock").textContent =
+        now.toLocaleTimeString("ar");
+
+    document.getElementById("currentDate").textContent =
+        now.toLocaleDateString(
+            "ar",
+            {
+                weekday:"long",
+                year:"numeric",
+                month:"long",
+                day:"numeric"
+            }
+        );
+
+    let lat =
+        Number(
+            localStorage.getItem("astroLat")
+        );
+
+    let lon =
+        Number(
+            localStorage.getItem("astroLon")
+        );
+
+    if(isFinite(lat) && isFinite(lon)){
+
+        const sun =
+            sunHorizontal(
+                now,
+                lat,
+                lon
+            );
+
+        document.getElementById("homeSunAlt").textContent =
+            sun.altitude.toFixed(2)+"°";
+
+        document.getElementById("homeSunAz").textContent =
+            sun.azimuth.toFixed(2)+"°";
+
+    }
+}
+
+setInterval(updateClock,1000);
+
+
+/* =========================================================
+   رسم السماء
+========================================================= */
+
+function drawSky(){
+
+    const canvas =
+        document.getElementById("skyCanvas");
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const w =
+        canvas.width =
+        canvas.clientWidth*2;
+
+    const h =
+        canvas.height =
+        canvas.clientHeight*2;
+
+    ctx.clearRect(0,0,w,h);
+
+    /*
+       نجوم عشوائية ثابتة
+    */
+
+    let seed = 12345;
+
+    function random(){
+
+        seed =
+            (seed*9301+49297)%233280;
+
+        return seed/233280;
+    }
+
+    ctx.fillStyle="white";
+
+    for(let i=0;i<250;i++){
+
+        let x=random()*w;
+        let y=random()*h;
+        let r=random()*2+0.4;
+
+        ctx.beginPath();
+        ctx.arc(x,y,r,0,Math.PI*2);
+        ctx.fill();
+
+    }
+
+    const lat =
+        Number(
+            localStorage.getItem("astroLat")
+        ) || 47.3769;
+
+    const lon =
+        Number(
+            localStorage.getItem("astroLon")
+        ) || 8.5417;
+
+    const sun =
+        sunHorizontal(
+            new Date(),
+            lat,
+            lon
+        );
+
+    /*
+      رسم الشمس تقريبياً
+    */
+
+    const x =
+        w*(0.5 + sun.azimuth/360*0.8);
+
+    const y =
+        h*(0.5 - sun.altitude/180);
+
+    if(sun.altitude > -18){
+
+        ctx.fillStyle="#ffd35a";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            Math.max(30,Math.min(w-30,x)),
+            Math.max(30,Math.min(h-30,y)),
+            20,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+    }
+}
+
+setInterval(drawSky,1000);
+
+
+/* =========================================================
+   محاكاة النظام الشمسي
+========================================================= */
+
+const planets = [
+
+    {
+        name:"عطارد",
+        orbit:0.20,
+        speed:4.15,
+        size:5
+    },
+
+    {
+        name:"الزهرة",
+        orbit:0.32,
+        speed:1.62,
+        size:7
+    },
+
+    {
+        name:"الأرض",
+        orbit:0.46,
+        speed:1,
+        size:9
+    },
+
+    {
+        name:"المريخ",
+        orbit:0.62,
+        speed:0.53,
+        size:7
+    },
+
+    {
+        name:"المشتري",
+        orbit:0.85,
+        speed:0.084,
+        size:14
+    },
+
+    {
+        name:"زحل",
+        orbit:1.05,
+        speed:0.034,
+        size:12
+    },
+
+    {
+        name:"أورانوس",
+        orbit:1.23,
+        speed:0.012,
+        size:9
+    },
+
+    {
+        name:"نبتون",
+        orbit:1.40,
+        speed:0.006,
+        size:9
+    }
+
+];
+
+let animationRunning=true;
+
+let animationTime=0;
+
+function toggleAnimation(){
+
+    animationRunning =
+        !animationRunning;
+}
+
+function resetAnimation(){
+
+    animationTime=0;
+}
+
+function drawSolarSystem(){
+
+    const canvas =
+        document.getElementById("spaceCanvas");
+
+    if(!canvas)
+        return;
+
+    const ctx =
+        canvas.getContext("2d");
+
+    const w =
+        canvas.width =
+        canvas.clientWidth*2;
+
+    const h =
+        canvas.height =
+        canvas.clientHeight*2;
+
+    ctx.clearRect(0,0,w,h);
+
+    const cx=w/2;
+    const cy=h/2;
+
+    /*
+      النجوم
+    */
+
+    let seed=888;
+
+    function rnd(){
+
+        seed =
+            (seed*16807)%2147483647;
+
+        return seed/2147483647;
+
+    }
+
+    ctx.fillStyle="#fff";
+
+    for(let i=0;i<350;i++){
+
+        const x=rnd()*w;
+        const y=rnd()*h;
+        const s=rnd()*2;
+
+        ctx.fillRect(x,y,s,s);
+
+    }
+
+    /*
+      الشمس
+    */
+
+    const sunR=25;
+
+    ctx.fillStyle="#ffd45c";
+
+    ctx.beginPath();
+
+    ctx.arc(
+        cx,
+        cy,
+        sunR,
+        0,
+        Math.PI*2
+    );
+
+    ctx.fill();
+
+    /*
+      الكواكب
+    */
+
+    planets.forEach((planet,index)=>{
+
+        const orbitRadius =
+            planet.orbit *
+            Math.min(w,h)*0.30;
+
+        ctx.strokeStyle=
+            "rgba(130,160,190,.25)";
+
+        ctx.lineWidth=2;
+
+        ctx.beginPath();
+
+        ctx.arc(
+            cx,
+            cy,
+            orbitRadius,
+            0,
+            Math.PI*2
+        );
+
+        ctx.stroke();
+
+        const angle =
+            animationTime *
+            planet.speed *
+            0.015;
+
+        const x =
+            cx+
+            Math.cos(angle)*
+            orbitRadius;
+
+        const y =
+            cy+
+            Math.sin(angle)*
+            orbitRadius;
+
+        ctx.fillStyle =
+            index===2
+            ? "#55a8ff"
+            : "#c7c7c7";
+
+        ctx.beginPath();
+
+        ctx.arc(
+            x,
+            y,
+            planet.size,
+            0,
+            Math.PI*2
+        );
+
+        ctx.fill();
+
+        ctx.fillStyle="#fff";
+
+        ctx.font="20px Arial";
+
+        ctx.textAlign="center";
+
+        ctx.fillText(
+            planet.name,
+            x,
+            y-planet.size-8
+        );
+
+        /*
+          القمر حول الأرض
+        */
+
+        if(planet.name==="الأرض"){
+
+            const moonAngle =
+                animationTime*0.08;
+
+            const moonDistance=30;
+
+            const mx =
+                x+
+                Math.cos(moonAngle)*
+                moonDistance;
+
+            const my =
+                y+
+                Math.sin(moonAngle)*
+                moonDistance;
+
+            ctx.strokeStyle=
+                "rgba(255,255,255,.15)";
+
+            ctx.beginPath();
+
+            ctx.arc(
+                x,
+                y,
+                moonDistance,
+                0,
+                Math.PI*2
+            );
+
+            ctx.stroke();
+
+            ctx.fillStyle="#ddd";
+
+            ctx.beginPath();
+
+            ctx.arc(
+                mx,
+                my,
+                4,
+                0,
+                Math.PI*2
+            );
+
+            ctx.fill();
+
+            ctx.fillStyle="#fff";
+
+            ctx.fillText(
+                "القمر",
+                mx,
+                my-9
+            );
+        }
+
+    });
+
+    if(animationRunning){
+
+        const speed =
+            Number(
+                document.getElementById(
+                    "animationSpeed"
+                ).value
+            );
+
+        animationTime += speed;
+
+    }
+
+    requestAnimationFrame(drawSolarSystem);
+}
+
+
+/* =========================================================
+   التبويبات
+========================================================= */
+
+document.querySelectorAll(".tab")
+.forEach(button=>{
+
+    button.addEventListener(
+        "click",
+        ()=>{
+
+            document.querySelectorAll(".tab")
+            .forEach(b=>b.classList.remove("active"));
+
+            document.querySelectorAll(".section")
+            .forEach(s=>s.classList.remove("active"));
+
+            button.classList.add("active");
+
+            document
+                .getElementById(
+                    button.dataset.target
+                )
+                .classList.add("active");
+
+            if(button.dataset.target==="qibla")
+                calculateQibla();
+
+        }
+    );
+
+});
+
+
+/* =========================================================
+   التشغيل الأول
+========================================================= */
+
+function initialize(){
+
+    applyLocation();
+
+    const now =
+        new Date();
+
+    const iso =
+        now.toISOString()
+        .slice(0,16);
+
+    document.getElementById("solarDate").value =
+        iso;
+
+    document.getElementById("prayerDate").value =
+        now.toISOString()
+        .slice(0,10);
+
+    document.getElementById("timezone").value =
+        -now.getTimezoneOffset()/60;
+
+    updateClock();
+
+    drawSky();
+
+    drawSolarSystem();
+
+    calculateQibla();
+
+}
+
+initialize();
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,589 @@
+```html
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الفلك الشرعي — النظام الشمسي 3D</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:#000;
+    font-family:"Tajawal","Segoe UI",Arial,sans-serif;
+    color:white;
+}
+
+#solar-system{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+}
+
+canvas{
+    display:block;
+}
+
+.overlay{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background:
+        radial-gradient(circle at center,
+        transparent 35%,
+        rgba(0,0,0,.15) 65%,
+        rgba(0,0,0,.75) 100%);
+}
+
+.header{
+    position:fixed;
+    top:0;
+    right:0;
+    left:0;
+    padding:22px 30px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    z-index:10;
+    pointer-events:none;
+}
+
+.logo{
+    font-size:25px;
+    font-weight:800;
+    text-shadow:0 0 15px #00d9ff;
+}
+
+.logo span{
+    color:#42e8ff;
+}
+
+.subtitle{
+    color:#c7d8e8;
+    font-size:13px;
+    margin-top:4px;
+}
+
+.title{
+    position:fixed;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    text-align:center;
+    z-index:5;
+    pointer-events:none;
+    transition:.5s;
+}
+
+.title h1{
+    font-size:clamp(34px,6vw,78px);
+    font-weight:900;
+    letter-spacing:2px;
+    text-shadow:
+        0 0 15px rgba(255,255,255,.7),
+        0 0 35px rgba(0,180,255,.7);
+}
+
+.title p{
+    margin-top:12px;
+    color:#d4e8f5;
+    font-size:clamp(13px,1.8vw,20px);
+}
+
+.controls{
+    position:fixed;
+    bottom:25px;
+    right:25px;
+    left:25px;
+    z-index:20;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    pointer-events:auto;
+}
+
+button,
+select{
+    border:1px solid rgba(255,255,255,.2);
+    background:rgba(10,20,35,.72);
+    backdrop-filter:blur(12px);
+    color:white;
+    padding:11px 17px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+button:hover,
+select:hover{
+    background:rgba(20,70,100,.85);
+    border-color:#35ddff;
+}
+
+.speed-box{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    background:rgba(10,20,35,.72);
+    backdrop-filter:blur(12px);
+    border:1px solid rgba(255,255,255,.2);
+    padding:8px 14px;
+    border-radius:12px;
+}
+
+input[type="range"]{
+    width:120px;
+}
+
+.info{
+    position:fixed;
+    top:95px;
+    right:25px;
+    z-index:15;
+    width:230px;
+    padding:15px;
+    border-radius:15px;
+    background:rgba(5,15,25,.55);
+    border:1px solid rgba(255,255,255,.15);
+    backdrop-filter:blur(10px);
+    opacity:0;
+    transform:translateX(30px);
+    transition:.4s;
+    pointer-events:none;
+}
+
+.info.show{
+    opacity:1;
+    transform:translateX(0);
+}
+
+.info h3{
+    color:#4eeaff;
+    margin-bottom:8px;
+}
+
+.info p{
+    color:#d6e6ef;
+    font-size:13px;
+    line-height:1.8;
+}
+
+.enter{
+    position:fixed;
+    bottom:95px;
+    left:50%;
+    transform:translateX(-50%);
+    z-index:15;
+    padding:13px 30px;
+    border-radius:30px;
+    background:linear-gradient(135deg,#00b7ff,#0066ff);
+    border:none;
+    font-weight:bold;
+    box-shadow:0 0 30px rgba(0,170,255,.45);
+}
+
+.enter:hover{
+    transform:translateX(-50%) scale(1.05);
+}
+
+.hint{
+    position:fixed;
+    bottom:15px;
+    left:20px;
+    color:#8fa7b8;
+    font-size:11px;
+    z-index:5;
+}
+
+@media(max-width:600px){
+    .header{
+        padding:15px;
+    }
+
+    .logo{
+        font-size:18px;
+    }
+
+    .info{
+        top:75px;
+        right:10px;
+        width:190px;
+    }
+
+    .controls{
+        bottom:15px;
+        right:10px;
+        left:10px;
+    }
+
+    .enter{
+        bottom:125px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div id="solar-system"></div>
+<div class="overlay"></div>
+
+<div class="header">
+    <div>
+        <div class="logo">☀ <span>الفلك الشرعي</span></div>
+        <div class="subtitle">النظام الشمسي — محاكاة فلكية ثلاثية الأبعاد</div>
+    </div>
+</div>
+
+<div class="title" id="title">
+    <h1>النظام الشمسي</h1>
+    <p>رحلة ثلاثية الأبعاد بين الشمس والكواكب</p>
+</div>
+
+<div class="info" id="info">
+    <h3 id="planetName">الأرض</h3>
+    <p id="planetDescription">
+        كوكبنا، ويدور حول الشمس في مدار شبه دائري.
+    </p>
+</div>
+
+<button class="enter" id="enterBtn">
+    دخول إلى الموقع الفلكي
+</button>
+
+<div class="controls">
+
+    <button id="playBtn">⏸ إيقاف</button>
+
+    <button id="resetBtn">↻ إعادة</button>
+
+    <button id="cameraBtn">🎥 كاميرا تلقائية</button>
+
+    <select id="planetSelect">
+        <option value="all">🌌 النظام الشمسي</option>
+        <option value="sun">☀ الشمس</option>
+        <option value="mercury">☿ عطارد</option>
+        <option value="venus">♀ الزهرة</option>
+        <option value="earth">🌍 الأرض</option>
+        <option value="mars">♂ المريخ</option>
+        <option value="jupiter">♃ المشتري</option>
+        <option value="saturn">♄ زحل</option>
+        <option value="uranus">♅ أورانوس</option>
+        <option value="neptune">♆ نبتون</option>
+    </select>
+
+    <div class="speed-box">
+        <span>السرعة</span>
+        <input
+            id="speed"
+            type="range"
+            min="0"
+            max="5"
+            value="1"
+            step=".1">
+        <span id="speedValue">1x</span>
+    </div>
+
+</div>
+
+<div class="hint">
+    اسحب بالماوس للدوران • عجلة الماوس للتكبير والتصغير
+</div>
+
+
+<!-- Three.js -->
+<script type="module">
+
+import * as THREE from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js";
+
+import { OrbitControls } from
+"https://cdn.jsdelivr.net/npm/three@0.180.0/examples/jsm/controls/OrbitControls.js";
+
+
+/* =========================================
+   المشهد
+========================================= */
+
+const container =
+    document.getElementById("solar-system");
+
+const scene = new THREE.Scene();
+
+scene.background = new THREE.Color(0x000205);
+
+
+/* =========================================
+   الكاميرا
+========================================= */
+
+const camera = new THREE.PerspectiveCamera(
+    55,
+    window.innerWidth / window.innerHeight,
+    0.1,
+    5000
+);
+
+camera.position.set(0,80,170);
+
+
+/* =========================================
+   Renderer
+========================================= */
+
+const renderer = new THREE.WebGLRenderer({
+    antialias:true,
+    powerPreference:"high-performance"
+});
+
+renderer.setPixelRatio(
+    Math.min(window.devicePixelRatio,2)
+);
+
+renderer.setSize(
+    window.innerWidth,
+    window.innerHeight
+);
+
+renderer.outputColorSpace =
+    THREE.SRGBColorSpace;
+
+container.appendChild(renderer.domElement);
+
+
+/* =========================================
+   التحكم بالكاميرا
+========================================= */
+
+const controls = new OrbitControls(
+    camera,
+    renderer.domElement
+);
+
+controls.enableDamping = true;
+
+controls.dampingFactor = .04;
+
+controls.minDistance = 25;
+
+controls.maxDistance = 800;
+
+
+/* =========================================
+   النجوم
+========================================= */
+
+function createStars(){
+
+    const geometry =
+        new THREE.BufferGeometry();
+
+    const count = 10000;
+
+    const positions =
+        new Float32Array(count * 3);
+
+    for(let i=0;i<count;i++){
+
+        const radius =
+            500 + Math.random()*1500;
+
+        const theta =
+            Math.random()*Math.PI*2;
+
+        const phi =
+            Math.acos(
+                2*Math.random()-1
+            );
+
+        positions[i*3] =
+            radius *
+            Math.sin(phi) *
+            Math.cos(theta);
+
+        positions[i*3+1] =
+            radius *
+            Math.cos(phi);
+
+        positions[i*3+2] =
+            radius *
+            Math.sin(phi) *
+            Math.sin(theta);
+    }
+
+    geometry.setAttribute(
+        "position",
+        new THREE.BufferAttribute(
+            positions,
+            3
+        )
+    );
+
+    const material =
+        new THREE.PointsMaterial({
+            color:0xffffff,
+            size:1.2,
+            sizeAttenuation:true
+        });
+
+    scene.add(
+        new THREE.Points(
+            geometry,
+            material
+        )
+    );
+}
+
+createStars();
+
+
+/* =========================================
+   إضاءة
+========================================= */
+
+const ambient =
+    new THREE.AmbientLight(
+        0x555555,
+        .35
+    );
+
+scene.add(ambient);
+
+const sunlight =
+    new THREE.PointLight(
+        0xffffff,
+        250000,
+        0
+    );
+
+sunlight.position.set(0,0,0);
+
+scene.add(sunlight);
+
+
+/* =========================================
+   الشمس
+========================================= */
+
+const sunGeometry =
+    new THREE.SphereGeometry(
+        10,
+        64,
+        64
+    );
+
+const sunMaterial =
+    new THREE.MeshBasicMaterial({
+        color:0xffcc33
+    });
+
+const sun =
+    new THREE.Mesh(
+        sunGeometry,
+        sunMaterial
+    );
+
+scene.add(sun);
+
+
+/* توهج الشمس */
+
+const glowGeometry =
+    new THREE.SphereGeometry(
+        13,
+        32,
+        32
+    );
+
+const glowMaterial =
+    new THREE.MeshBasicMaterial({
+        color:0xffaa00,
+        transparent:true,
+        opacity:.18,
+        blending:THREE.AdditiveBlending,
+        side:THREE.BackSide
+    });
+
+const sunGlow =
+    new THREE.Mesh(
+        glowGeometry,
+        glowMaterial
+    );
+
+sun.add(sunGlow);
+
+
+/* =========================================
+   بيانات الكواكب
+========================================= */
+
+const planets = {
+
+    mercury:{
+        name:"عطارد",
+        radius:1.4,
+        distance:17,
+        speed:.047,
+        color:0x999999,
+        description:
+        "أقرب الكواكب إلى الشمس."
+    },
+
+    venus:{
+        name:"الزهرة",
+        radius:2.1,
+        distance:25,
+        speed:.035,
+        color:0xd9b37a,
+        description:
+        "ثاني كواكب النظام الشمسي."
+    },
+
+    earth:{
+        name:"الأرض",
+        radius:2.3,
+        distance:35,
+        speed:.0298,
+        color:0x2775d8,
+        description:
+        "كوكب الأرض، وتدور حوله القمر."
+    },
+
+    mars:{
+        name:"المريخ",
+        radius:1.8,
+        distance:46,
+        speed:.024,
+        color:0xc84c2f,
+        description:
+        "الكوكب الأحمر."
+    },
+
+    jupiter:{
+        name:"المشتري",
+        radius:5.5,
+        distance:66,
+        speed:.013,
+        color:0xc99c6a,
+        description:
+        "أكبر كواكب النظام الشمسي."
+    },
+
+    saturn:{
+        name:"زحل",
+        radius:4.7,
+        distance:88,
+        speed:.0097,
+        color:0
+```
